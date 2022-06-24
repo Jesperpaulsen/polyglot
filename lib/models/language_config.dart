@@ -1,25 +1,31 @@
 import 'package:intl_ui/services/language_code_to_readable_name.dart';
 
 class LanguageConfig {
-  String pathToConfigFile;
+  String pathToi18nFile;
   String languageCode;
   String? displayLanguage;
+  bool isMaster;
 
   LanguageConfig({
-    required this.pathToConfigFile,
+    required this.pathToi18nFile,
     required this.languageCode,
+    required this.isMaster,
   });
 
   LanguageConfig.fromJson(Map<String, dynamic> json)
-      : pathToConfigFile = json['pathToConfigFile'] ?? '',
+      : pathToi18nFile = json['pathToi18nFile'] ?? '',
         languageCode = json['languageCode'] ?? '',
-        displayLanguage = LanguageCodeToReadableName.instance
-            .getLanguageNameForCode(json['languageCode'] ?? '');
+        isMaster = json['isMaster'] ?? false,
+        displayLanguage =
+            LanguageCodeToReadableName.instance.getLanguageNameForCode(
+          json['languageCode'] ?? '',
+        );
 
   toJson() {
     return {
-      'pathToConfigFile': pathToConfigFile,
+      'pathToi18nFile': pathToi18nFile,
       'languageCode': languageCode,
+      'isMaster': isMaster
     };
   }
 }

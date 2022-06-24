@@ -1,21 +1,24 @@
 import 'package:intl_ui/models/language_config.dart';
 
-class Config {
-  late final Map<String, LanguageConfig> languageConfigs;
-  late final String? translateAPIKey;
+class ProjectConfig {
+  late Map<String, LanguageConfig> languageConfigs;
+  late String? translationKeyInFiles;
+  late String? translateAPIKey;
 
-  Config({
+  ProjectConfig({
     this.languageConfigs = const <String, LanguageConfig>{},
-    this.translateAPIKey,
+    this.translationKeyInFiles,
+    this.translateAPIKey = '',
   });
 
-  Config.fromJson(Map<String, dynamic> json) {
+  ProjectConfig.fromJson(Map<String, dynamic> json) {
     final res = <String, LanguageConfig>{};
-    for (final languageConfig in json['languageConfigs']) {
+    for (final languageConfig in json['languageConfigs'].values) {
       final parsedConfig = LanguageConfig.fromJson(languageConfig);
       res[parsedConfig.languageCode] = parsedConfig;
     }
     languageConfigs = res;
+    translationKeyInFiles = json['translationKeyInFiles'];
     translateAPIKey = json['translateAPIKey'];
   }
 
@@ -29,7 +32,8 @@ class Config {
 
     return {
       'languageConfigs': convertedLanguageConfigs,
-      'translateAPIKey': translateAPIKey
+      'translationKeyInFiles': translationKeyInFiles,
+      'translateAPIKey': translateAPIKey,
     };
   }
 }
