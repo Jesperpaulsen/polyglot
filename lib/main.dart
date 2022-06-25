@@ -1,5 +1,6 @@
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_ui/screens/dashboard.dart';
 import 'package:intl_ui/services/config_handler.dart';
@@ -28,5 +29,16 @@ class IntlUI extends StatelessWidget {
       ),
       home: const Dashboard(),
     );
+  }
+}
+
+class LoggingShortcutManager extends ShortcutManager {
+  @override
+  KeyEventResult handleKeypress(BuildContext context, RawKeyEvent event) {
+    final KeyEventResult result = super.handleKeypress(context, event);
+    if (result == KeyEventResult.handled) {
+      print('Handled shortcut $event in $context');
+    }
+    return result;
   }
 }

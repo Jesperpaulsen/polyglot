@@ -8,6 +8,7 @@ class TranslationState {
   var translationKeys = <String>{};
   var translations = <String, TranslationManager>{};
   var loading = false;
+  var version = 0;
 
   TranslationState copyWith({
     Set<String>? translationKeys,
@@ -18,6 +19,7 @@ class TranslationState {
     copy.translationKeys = translationKeys ?? this.translationKeys;
     copy.translations = translations ?? this.translations;
     copy.loading = loading ?? this.loading;
+    copy.version = version;
     return copy;
   }
 }
@@ -57,7 +59,20 @@ class TranslationProvider extends StateNotifier<TranslationState> {
       translationKeys: translationsLoad.allTranslationKeys,
       translations: translationsLoad.translationsPerCountry,
     );
+    newState.version = state.version + 1;
     _setState(newState);
+  }
+
+  Future<void> addTranslations({
+    required String translationKey,
+    required Map<String, String> translations,
+  }) async {
+    await TranslationWriterIsolate().addTranslations(
+      translationKey: translationKey,
+      translations: translations,
+      translationManagers: state.translations,
+    );
+    reloadTranslations();
   }
 
   Future<void> updateTranslation({
@@ -80,6 +95,7 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     }
 
     translationManager.translations[translationKey] = newValue;
+    _setState(state);
 
     return TranslationWriterIsolate()
         .sortAndWriteTranslationFileWithSeparateIsolate(
@@ -90,8 +106,16 @@ class TranslationProvider extends StateNotifier<TranslationState> {
 
   Future<void> updateTranslationKey({
     required String oldTranslationKey,
-    required String newTranslationKey,
+    String? newTranslationKey,
   }) async {
+    final translationKeys = state.translationKeys;
+    translationKeys.remove(oldTranslationKey);
+    if (newTranslationKey != null) {
+      translationKeys.add(newTranslationKey);
+    }
+    final newState = state.copyWith(translationKeys: translationKeys);
+    _setState(newState);
+
     return TranslationWriterIsolate().updateKeyInAllTranslationFiles(
       oldTranslationKey: oldTranslationKey,
       newTranslationKey: newTranslationKey,

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/providers/grid_provider.dart';
 import 'package:intl_ui/providers/translation_provider.dart';
+import 'package:intl_ui/services/grid_builder.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 class Grid extends ConsumerStatefulWidget {
-  const Grid({Key? key}) : super(key: key);
+  final TranslationState translationState;
+  const Grid({
+    required this.translationState,
+    Key? key,
+  }) : super(key: key);
 
   @override
   ConsumerState<Grid> createState() => _GridState();
@@ -14,19 +18,48 @@ class Grid extends ConsumerStatefulWidget {
 class _GridState extends ConsumerState<Grid> {
   var rows = <PlutoRow>[];
   var columns = <PlutoColumn>[];
+  var _internalVersion = 0;
+
+  _buildGrid() {
+    final builderResult = GridBuilder(context).buildGridFromTranslationKeys(
+      translationKeys: widget.translationState.translationKeys,
+      translationManagers: widget.translationState.translations,
+    );
+    setState(() {
+      rows = builderResult.rows;
+      columns = builderResult.columns;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _buildGrid();
+  }
+
+  @override
+  void didUpdateWidget(covariant Grid oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.translationState.version != widget.translationState.version) {
+      print(
+          '[New version, Grid reloading]: ${oldWidget.translationState.version}, ${widget.translationState.version}');
+      _buildGrid();
+      setState(() {
+        _internalVersion += 1;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final gridState = ref.watch(GridStateProvider.provider);
     final translationProvider = ref.read(TranslationProvider.provider.notifier);
     return PlutoGrid(
-      key: Key(
-          '${gridState.key - gridState.columns.length - gridState.rows.length}'),
+      key: Key(_internalVersion.toString()),
       onLoaded: (PlutoGridOnLoadedEvent event) {
         event.stateManager.setShowColumnFilter(true);
       },
-      columns: gridState.columns,
-      rows: gridState.rows,
+      columns: columns,
+      rows: rows,
       configuration: PlutoGridConfiguration(
         columnFilterConfig: PlutoGridColumnFilterConfig(
           resolveDefaultColumnFilter: (column, resolver) =>
@@ -34,6 +67,7 @@ class _GridState extends ConsumerState<Grid> {
         ),
       ),
       onChanged: (event) {
+        print(event);
         if (event.columnIdx == 0) {
           translationProvider.updateTranslationKey(
             oldTranslationKey: event.oldValue,
@@ -41,7 +75,6 @@ class _GridState extends ConsumerState<Grid> {
           );
           return;
         }
-        print(event.row?.cells['translation_key']?.value);
         translationProvider.updateTranslation(
           translationKey: event.row?.cells['translation_key']?.value,
           translationCode: event.column!.field,

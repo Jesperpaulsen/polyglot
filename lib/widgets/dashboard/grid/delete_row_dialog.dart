@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl_ui/providers/translation_provider.dart';
+import 'package:intl_ui/widgets/common/button.dart';
 
-class DeleteRowDialog extends StatelessWidget {
+class DeleteRowDialog extends ConsumerWidget {
   final String translationKey;
-  final Function({required bool shouldDelete}) deleteCallback;
+  final VoidCallback deleteCallback;
 
   const DeleteRowDialog({
     required this.translationKey,
@@ -11,20 +14,27 @@ class DeleteRowDialog extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final updateTranslationKey =
+        ref.read(TranslationProvider.provider.notifier).updateTranslationKey;
+
     return AlertDialog(
-      content: Center(
-        child: Text(
-            'Are you sure you want to all corresponding translations for ${translationKey}?'),
-      ),
+      content: Text(
+          'Are you sure you want to delete all corresponding translations for ${translationKey}?'),
       actions: [
-        ElevatedButton(
-          onPressed: () => deleteCallback(shouldDelete: true),
-          child: Text('yes'),
+        Button(
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+          child: const Text('no'),
         ),
-        ElevatedButton(
-          onPressed: () => deleteCallback(shouldDelete: false),
-          child: Text('no'),
+        Button(
+          onPressed: () {
+            updateTranslationKey(oldTranslationKey: translationKey);
+            deleteCallback();
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+          child: const Text('yes'),
         ),
       ],
     );

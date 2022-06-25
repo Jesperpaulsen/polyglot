@@ -21,9 +21,42 @@ class IsolateMessage {
 }
 
 class TranslationWriterIsolate {
+  Future<void> addTranslations({
+    required String translationKey,
+    required Map<String, String> translations,
+    required Map<String, TranslationManager> translationManagers,
+  }) async {
+    final futures = <Future<void>>[];
+    for (final translationEntry in translations.entries) {
+      final intlCode = translationEntry.key;
+      final translation = translationEntry.value;
+
+      final manager = translationManagers[intlCode];
+
+      if (manager == null) {
+        throw Exception(
+            'No translation manager matching translation code $intlCode');
+      }
+      final config =
+          ConfigHandler.instance.projectConfig?.languageConfigs[intlCode];
+
+      if (config == null) {
+        throw Exception(
+            'No translation config matching translation code $intlCode');
+      }
+
+      manager.translations[translationKey] = translation;
+      futures
+          .add(sortAndWriteTranslationFileWithSeparateIsolate(config, manager));
+    }
+    print('hello');
+    await Future.wait(futures);
+    print('yoyoyo');
+  }
+
   Future<void> updateKeyInAllTranslationFiles({
     required String oldTranslationKey,
-    required String newTranslationKey,
+    required String? newTranslationKey,
     required Map<String, TranslationManager> translationManagers,
   }) async {
     final allConfigs = ConfigHandler.instance.projectConfig?.languageConfigs;
@@ -42,7 +75,9 @@ class TranslationWriterIsolate {
 
       final oldTranslation = manager.translations[oldTranslationKey];
       manager.translations.remove(oldTranslationKey);
-      manager.translations[newTranslationKey] = oldTranslation;
+      if (newTranslationKey != null) {
+        manager.translations[newTranslationKey] = oldTranslation;
+      }
 
       futures
           .add(sortAndWriteTranslationFileWithSeparateIsolate(config, manager));
@@ -73,7 +108,8 @@ class TranslationWriterIsolate {
         translations: manager.translations,
       ),
     );
-    return await port.first;
+    await port.first;
+    return;
   }
 
   Future<void> _writeAndSortFileOnIsolate(IsolateMessage message) async {
@@ -101,7 +137,7 @@ class TranslationWriterIsolate {
       }
       final encodedJson = getPrettyJSONString(json);
       await File(fileName).writeAsString(encodedJson);
-      port.send(Future.value());
+      port.send(Null);
     } catch (e) {
       print(e);
     }

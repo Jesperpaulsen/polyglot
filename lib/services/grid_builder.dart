@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl_ui/models/translation_manager.dart';
+import 'package:intl_ui/widgets/dashboard/grid/delete_row_dialog.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 class GridBuilderResult {
@@ -13,6 +14,10 @@ class GridBuilderResult {
 }
 
 class GridBuilder {
+  final BuildContext _context;
+
+  GridBuilder(this._context);
+
   GridBuilderResult buildGridFromTranslationKeys({
     required Set<String> translationKeys,
     required Map<String, TranslationManager> translationManagers,
@@ -42,9 +47,19 @@ class GridBuilder {
                   icon: const Icon(
                     Icons.delete,
                   ),
-                  onPressed: () {
-                    rendererContext.stateManager.removeRows(
-                      [rendererContext.row],
+                  onPressed: () async {
+                    showDialog(
+                      context: _context,
+                      builder: (_) => DeleteRowDialog(
+                        translationKey: rendererContext
+                            .row.cells[rendererContext.column.field]!.value
+                            .toString(),
+                        deleteCallback: () {
+                          rendererContext.stateManager.removeRows(
+                            [rendererContext.row],
+                          );
+                        },
+                      ),
                     );
                   },
                   iconSize: 18,
