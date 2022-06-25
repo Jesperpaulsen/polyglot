@@ -11,7 +11,6 @@ class CreateNewAction extends Action<CreateNewIntent> {
 
   @override
   Object? invoke(CreateNewIntent intent) {
-    print('yoo');
     openCreateNewDialog();
     return true;
   }

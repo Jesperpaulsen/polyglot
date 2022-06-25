@@ -45,7 +45,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
                     icon: const Icon(
                       Icons.settings,
                     ),
-                  )
+                  ),
                 ],
               )
             ],

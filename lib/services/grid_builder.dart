@@ -125,7 +125,9 @@ class GridBuilder {
       );
     }
 
-    for (final translationKey in translationKeys) {
+    final sortedTranslationKeys = translationKeys.toList()..sort();
+
+    for (final translationKey in sortedTranslationKeys) {
       final cells = <String, PlutoCell>{
         'translation_key': PlutoCell(value: translationKey)
       };
