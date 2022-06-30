@@ -98,7 +98,6 @@ class TranslationWriterIsolate {
     final port = ReceivePort();
     final translationKeyInFiles =
         ConfigHandler.instance.projectConfig?.translationKeyInFiles;
-    print(translationKeyInFiles);
     Isolate.spawn<IsolateMessage>(
       _writeAndSortFileOnIsolate,
       IsolateMessage(

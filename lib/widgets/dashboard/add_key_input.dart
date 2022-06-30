@@ -13,6 +13,20 @@ class AddKeyInput extends StatefulWidget {
 class _AddKeyInputState extends State<AddKeyInput> {
   var translationKey = '';
 
+  _showNeyKeyDialog() {
+    return showDialog(
+        context: context,
+        builder: (ctx) => NewKeyDialog(
+              initialValue: translationKey,
+              onDone: () {
+                setState(() {
+                  translationKey = '';
+                });
+                Navigator.pop(ctx);
+              },
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,26 +45,18 @@ class _AddKeyInputState extends State<AddKeyInput> {
                 });
               },
               label: 'Add new translation key',
+              onSubmitted: _showNeyKeyDialog,
             ),
           ),
           const SizedBox(
             width: 10,
           ),
           Button(
-            child: const Text('Add key'),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (ctx) => NewKeyDialog(
-                initialValue: translationKey,
-                onDone: () {
-                  setState(() {
-                    translationKey = '';
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
+            onPressed: _showNeyKeyDialog,
+            child: const Text(
+              'Add key',
             ),
-          )
+          ),
         ],
       ),
     );

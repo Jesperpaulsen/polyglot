@@ -10,6 +10,7 @@ class Input extends StatefulWidget {
   final void Function(String value)? onChange;
   final String? Function(String? value, TextEditingController? controller)?
       validator;
+  final VoidCallback? onSubmitted;
 
   const Input({
     this.label,
@@ -20,6 +21,7 @@ class Input extends StatefulWidget {
     this.onChange,
     this.validator,
     this.value,
+    this.onSubmitted,
     Key? key,
   }) : super(key: key);
 
@@ -59,6 +61,7 @@ class _InputState extends State<Input> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
+      onFieldSubmitted: (value) => widget.onSubmitted?.call(),
       onSaved: (v) => widget.onChange?.call(v ?? ""),
       validator: (v) => widget.validator?.call(v, _textInputController),
       controller: _textInputController,
