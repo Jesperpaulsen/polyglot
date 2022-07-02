@@ -24,8 +24,11 @@ class FileHandler {
     return File(fullPath);
   }
 
-  Future<File> _getFile(
-      {String? directory, String? fileName, String? fullPath}) async {
+  Future<File> _getFile({
+    String? directory,
+    String? fileName,
+    String? fullPath,
+  }) async {
     if (fullPath != null) {
       return File(fullPath);
     }
@@ -39,7 +42,10 @@ class FileHandler {
     String? fullPath,
   }) async {
     final file = await _getFile(
-        directory: directory, fileName: fileName, fullPath: fullPath);
+      directory: directory,
+      fileName: fileName,
+      fullPath: fullPath,
+    );
     final json = await file.readAsString();
     return jsonDecode(json);
   }
@@ -51,7 +57,10 @@ class FileHandler {
     required Map<String, dynamic> content,
   }) async {
     final file = await _getFile(
-        directory: directory, fileName: fileName, fullPath: fullPath);
+      directory: directory,
+      fileName: fileName,
+      fullPath: fullPath,
+    );
     return file.writeAsString(jsonEncode(content));
   }
 }

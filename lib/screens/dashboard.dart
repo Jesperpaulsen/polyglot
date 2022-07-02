@@ -6,6 +6,7 @@ import 'package:intl_ui/widgets/common/screen_widget.dart';
 import 'package:intl_ui/widgets/dashboard/add_key_input.dart';
 import 'package:intl_ui/widgets/dashboard/grid/grid.dart';
 import 'package:intl_ui/widgets/dashboard/refresh_button.dart';
+import 'package:intl_ui/widgets/settings/select_project.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -44,6 +45,16 @@ class _DashboardState extends ConsumerState<Dashboard> {
                     },
                     icon: const Icon(
                       Icons.settings,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) => const SelectProject());
+                    },
+                    icon: const Icon(
+                      Icons.grid_view,
                     ),
                   ),
                 ],

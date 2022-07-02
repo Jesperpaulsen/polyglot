@@ -38,8 +38,6 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final reloadTranslations =
-        ref.read(TranslationProvider.provider.notifier).reloadTranslations;
     return Column(
       children: [
         const Text('Settings'),

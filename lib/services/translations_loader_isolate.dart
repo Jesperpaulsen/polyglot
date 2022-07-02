@@ -67,8 +67,6 @@ class TranslationsLoaderIsolate {
     final translationKeyInFiles =
         ConfigHandler.instance.projectConfig?.translationKeyInFiles;
 
-    print(translationKeyInFiles);
-
     Isolate.spawn<IsolateMessage>(
       _readFileOnIsolate,
       IsolateMessage(

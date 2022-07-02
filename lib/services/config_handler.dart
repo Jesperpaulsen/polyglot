@@ -33,10 +33,7 @@ class ConfigHandler {
       internalConfig = InternalConfig();
       _storeInternalConfig(internalConfig);
     }
-    translationDirectory =
-        Directory.fromUri(Uri(path: internalConfig.projectConfigPath))
-            .parent
-            .path;
+    translationDirectory = _getProjectConfigDirectory(internalConfig);
     return internalConfig;
   }
 
@@ -45,8 +42,15 @@ class ConfigHandler {
     _projectConfig = await _initializeProjectConfig(_internalConfig!);
   }
 
+  String _getProjectConfigDirectory(InternalConfig internalConfig) {
+    return Directory.fromUri(Uri(path: internalConfig.projectConfigPath))
+        .parent
+        .path;
+  }
+
   Future<ProjectConfig> _initializeProjectConfig(
-      InternalConfig internalConfig) async {
+    InternalConfig internalConfig,
+  ) async {
     var projectConfig = await _readProjectConfig(
       internalConfig.projectConfigPath ?? '',
     );
@@ -54,6 +58,8 @@ class ConfigHandler {
       projectConfig = ProjectConfig();
       _storeProjectConfig(projectConfig);
     }
+    print(projectConfig.languageConfigs.entries
+        .map((e) => print(e.value.pathToi18nFile)));
     return projectConfig;
   }
 
@@ -70,7 +76,9 @@ class ConfigHandler {
       throw Exception('Config is null');
     }
     internalConfig!.projectConfigPath = newPath;
-    return _storeInternalConfig(internalConfig!);
+    translationDirectory = _getProjectConfigDirectory(internalConfig!);
+    _projectConfig = await _initializeProjectConfig(internalConfig!);
+    await saveInternalConfig();
   }
 
   Future<InternalConfig?> _readInternalConfig() async {
@@ -88,6 +96,11 @@ class ConfigHandler {
     if (internalConfig == null) {
       return Future.value();
     }
+    if (internalConfig!.projectConfigPath != null &&
+        !internalConfig!.projects.contains(internalConfig!.projectConfigPath)) {
+      internalConfig!.projects.add(internalConfig!.projectConfigPath!);
+    }
+    print(internalConfig!.projects);
     return _storeInternalConfig(internalConfig!);
   }
 
