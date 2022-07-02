@@ -2,14 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_ui/providers/translation_provider.dart';
 import 'package:intl_ui/services/config_handler.dart';
+import 'package:intl_ui/services/debouncer.dart';
 import 'package:intl_ui/widgets/common/file_picker_input.dart';
 import 'package:intl_ui/widgets/common/input.dart';
 
-class GeneralSettings extends ConsumerWidget {
+class GeneralSettings extends ConsumerStatefulWidget {
   const GeneralSettings({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<GeneralSettings> createState() => _GeneralSettingsState();
+}
+
+class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
+  late final VoidCallback _reloadTranslations;
+  late final Debouncer debouncer;
+
+  @override
+  void initState() {
+    super.initState();
+    _reloadTranslations =
+        ref.read(TranslationProvider.provider.notifier).reloadTranslations;
+    debouncer = Debouncer(
+      callbackFn: _reloadTranslations,
+      timeout: const Duration(
+        milliseconds: 700,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    debouncer.cancelTimer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final reloadTranslations =
         ref.read(TranslationProvider.provider.notifier).reloadTranslations;
     return Column(
@@ -22,7 +50,7 @@ class GeneralSettings extends ConsumerWidget {
           onFilePicked: (path) {
             if (path == null) return;
             ConfigHandler.instance.changePathToProjectConfigFile(path);
-            reloadTranslations();
+            debouncer.changeHappened();
           },
           type: PICKER_TYPE.FILE,
           allowedExtensions: const ['json'],
@@ -33,11 +61,11 @@ class GeneralSettings extends ConsumerWidget {
         Input(
           label: 'Key used in translation files',
           value: ConfigHandler.instance.projectConfig?.translationKeyInFiles,
-          onSubmitted: (newTranslationKey) {
+          onChange: (newTranslationKey) {
             ConfigHandler.instance.projectConfig?.translationKeyInFiles =
                 newTranslationKey;
             ConfigHandler.instance.saveProjectConfig();
-            reloadTranslations();
+            debouncer.changeHappened();
           },
         )
       ],
