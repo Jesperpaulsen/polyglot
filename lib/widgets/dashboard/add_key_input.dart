@@ -45,7 +45,7 @@ class _AddKeyInputState extends State<AddKeyInput> {
                 });
               },
               label: 'Add new translation key',
-              onSubmitted: _showNeyKeyDialog,
+              onSubmitted: (_) => _showNeyKeyDialog(),
             ),
           ),
           const SizedBox(

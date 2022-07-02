@@ -83,7 +83,7 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
                           label: translation.intlLanguageName ?? '',
                           onChange: (value) =>
                               _translations[translation.intlCode] = value,
-                          onSubmitted: () => _storeTranslations(context),
+                          onSubmitted: (_) => _storeTranslations(context),
                         ),
                       ),
                       if (!translation.isMaster)

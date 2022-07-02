@@ -67,6 +67,8 @@ class TranslationsLoaderIsolate {
     final translationKeyInFiles =
         ConfigHandler.instance.projectConfig?.translationKeyInFiles;
 
+    print(translationKeyInFiles);
+
     Isolate.spawn<IsolateMessage>(
       _readFileOnIsolate,
       IsolateMessage(
@@ -88,8 +90,15 @@ class TranslationsLoaderIsolate {
     try {
       final fileData = await File(fileName).readAsString();
       var json = jsonDecode(fileData);
-      if (translationKeyInFiles != null) {
+
+      if (translationKeyInFiles != null && translationKeyInFiles.isNotEmpty) {
         json = json[translationKeyInFiles];
+      }
+
+      if (json == null) {
+        port.send(TranslationLoad(
+            translationKeys: <String>{}, translations: <String, String>{}));
+        return;
       }
 
       for (final entry in json.entries) {

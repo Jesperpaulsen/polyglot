@@ -11,7 +11,7 @@ class Input extends StatefulWidget {
   final void Function(String? value)? onChange;
   final String? Function(String? value, TextEditingController? controller)?
       validator;
-  final VoidCallback? onSubmitted;
+  final Function(String? value)? onSubmitted;
   final bool autofocus;
 
   const Input({
@@ -78,7 +78,7 @@ class _InputState extends State<Input> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      onFieldSubmitted: (value) => widget.onSubmitted?.call(),
+      onFieldSubmitted: (value) => widget.onSubmitted?.call(value),
       onSaved: (v) => onSaved,
       validator: (v) => widget.validator?.call(v, _textInputController),
       controller: _textInputController,
