@@ -17,7 +17,7 @@ class NewKeyDialog extends ConsumerStatefulWidget {
 
 class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
   late String _translationKey;
-  final _translations = <String, String>{};
+  final _translations = <String, String?>{};
 
   @override
   void initState() {
@@ -55,11 +55,12 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
               height: 20,
             ),
             Input(
+              autofocus: true,
               label: 'Translation key',
               value: widget.initialValue,
               onChange: (value) {
                 setState(() {
-                  _translationKey = value;
+                  _translationKey = value ?? '';
                 });
               },
             ),
@@ -82,6 +83,7 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
                           label: translation.intlLanguageName ?? '',
                           onChange: (value) =>
                               _translations[translation.intlCode] = value,
+                          onSubmitted: () => _storeTranslations(context),
                         ),
                       ),
                       if (!translation.isMaster)

@@ -41,7 +41,7 @@ class _AddKeyInputState extends State<AddKeyInput> {
               value: translationKey,
               onChange: (value) {
                 setState(() {
-                  translationKey = value;
+                  translationKey = value ?? '';
                 });
               },
               label: 'Add new translation key',
@@ -60,19 +60,5 @@ class _AddKeyInputState extends State<AddKeyInput> {
         ],
       ),
     );
-  }
-}
-
-class LoggingActionDispatcher extends ActionDispatcher {
-  @override
-  Object? invokeAction(
-    covariant Action<Intent> action,
-    covariant Intent intent, [
-    BuildContext? context,
-  ]) {
-    print('Action invoked: $action($intent) from $context');
-    super.invokeAction(action, intent, context);
-
-    return null;
   }
 }

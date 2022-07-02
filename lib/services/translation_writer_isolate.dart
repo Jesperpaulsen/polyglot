@@ -23,11 +23,14 @@ class IsolateMessage {
 class TranslationWriterIsolate {
   Future<void> addTranslations({
     required String translationKey,
-    required Map<String, String> translations,
+    required Map<String, String?> translations,
     required Map<String, TranslationManager> translationManagers,
   }) async {
     final futures = <Future<void>>[];
     for (final translationEntry in translations.entries) {
+      if (translationEntry.value == null) {
+        continue;
+      }
       final intlCode = translationEntry.key;
       final translation = translationEntry.value;
 
@@ -49,9 +52,7 @@ class TranslationWriterIsolate {
       futures
           .add(sortAndWriteTranslationFileWithSeparateIsolate(config, manager));
     }
-    print('hello');
     await Future.wait(futures);
-    print('yoyoyo');
   }
 
   Future<void> updateKeyInAllTranslationFiles({

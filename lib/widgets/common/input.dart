@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Input extends StatefulWidget {
   final String? value;
@@ -7,10 +8,11 @@ class Input extends StatefulWidget {
   final String? hint;
   final TextInputType? type;
   final bool? password;
-  final void Function(String value)? onChange;
+  final void Function(String? value)? onChange;
   final String? Function(String? value, TextEditingController? controller)?
       validator;
   final VoidCallback? onSubmitted;
+  final bool autofocus;
 
   const Input({
     this.label,
@@ -22,6 +24,7 @@ class Input extends StatefulWidget {
     this.validator,
     this.value,
     this.onSubmitted,
+    this.autofocus = false,
     Key? key,
   }) : super(key: key);
 
@@ -46,9 +49,23 @@ class _InputState extends State<Input> {
     super.dispose();
   }
 
+  void onSaved(String? value) {
+    if (widget.onChange == null) {
+      return;
+    }
+    if (value == null) {
+      return widget.onChange!.call(null);
+    }
+    if (value.isEmpty) {
+      return widget.onChange!.call(null);
+    }
+    return widget.onChange!.call(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autofocus: widget.autofocus,
       decoration: InputDecoration(
         labelText: widget.label,
         errorText: widget.error,
@@ -62,7 +79,7 @@ class _InputState extends State<Input> {
         ),
       ),
       onFieldSubmitted: (value) => widget.onSubmitted?.call(),
-      onSaved: (v) => widget.onChange?.call(v ?? ""),
+      onSaved: (v) => onSaved,
       validator: (v) => widget.validator?.call(v, _textInputController),
       controller: _textInputController,
       keyboardType: widget.type,

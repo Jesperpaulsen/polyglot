@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_ui/models/translation_manager.dart';
 import 'package:intl_ui/services/config_handler.dart';
@@ -6,13 +8,13 @@ import 'package:intl_ui/services/translations_loader_isolate.dart';
 
 class TranslationState {
   var translationKeys = <String>{};
-  var translations = <String, TranslationManager>{};
+  var translations = SplayTreeMap<String, TranslationManager>();
   var loading = false;
   var version = 0;
 
   TranslationState copyWith({
     Set<String>? translationKeys,
-    Map<String, TranslationManager>? translations,
+    SplayTreeMap<String, TranslationManager>? translations,
     bool? loading,
   }) {
     final copy = TranslationState();
@@ -46,7 +48,7 @@ class TranslationProvider extends StateNotifier<TranslationState> {
 
   Future<void> reloadTranslations() async {
     final newState = state.copyWith(
-        translations: <String, TranslationManager>{},
+        translations: SplayTreeMap<String, TranslationManager>(),
         translationKeys: <String>{});
     _setState(newState);
     await _initializeTranslations();
@@ -55,9 +57,23 @@ class TranslationProvider extends StateNotifier<TranslationState> {
   Future<void> _initializeTranslations() async {
     final translationsLoad =
         await TranslationsLoaderIsolate().loadTranslations();
+
+    final sortedTranslations = SplayTreeMap<String, TranslationManager>.from(
+        translationsLoad.translationsPerCountry, (a, b) {
+      final masterA = translationsLoad.translationsPerCountry[a]?.isMaster;
+      final masterB = translationsLoad.translationsPerCountry[b]?.isMaster;
+      if (masterA != null && masterA) {
+        return -1;
+      }
+      if (masterB != null && masterB) {
+        return 1;
+      }
+      return 0;
+    });
+
     final newState = state.copyWith(
       translationKeys: translationsLoad.allTranslationKeys,
-      translations: translationsLoad.translationsPerCountry,
+      translations: sortedTranslations,
     );
     newState.version = state.version + 1;
     _setState(newState);
@@ -65,7 +81,7 @@ class TranslationProvider extends StateNotifier<TranslationState> {
 
   Future<void> addTranslations({
     required String translationKey,
-    required Map<String, String> translations,
+    required Map<String, String?> translations,
   }) async {
     await TranslationWriterIsolate().addTranslations(
       translationKey: translationKey,
