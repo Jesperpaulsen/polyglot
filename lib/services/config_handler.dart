@@ -100,8 +100,18 @@ class ConfigHandler {
         !internalConfig!.projects.contains(internalConfig!.projectConfigPath)) {
       internalConfig!.projects.add(internalConfig!.projectConfigPath!);
     }
-    print(internalConfig!.projects);
     return _storeInternalConfig(internalConfig!);
+  }
+
+  Future<void> removeProjectFromInternalConfig(String project) async {
+    if (internalConfig?.projectConfigPath == null) {
+      return;
+    }
+    if (project == internalConfig!.projectConfigPath) {
+      return;
+    }
+    internalConfig!.projects.remove(project);
+    saveInternalConfig();
   }
 
   Future<void> saveProjectConfig() {

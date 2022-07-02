@@ -75,18 +75,38 @@ class SelectProject extends ConsumerWidget {
                   onTap: () =>
                       _changePath(project, reloadTranslations, context),
                   child: DecoratedBox(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 1.5,
-                            color: Colors.grey,
-                          ),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 1.5,
+                          color: Colors.grey,
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(project),
-                      )),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: Text(project),
+                          ),
+                          IconButton(
+                              onPressed: project !=
+                                      ConfigHandler.instance.internalConfig
+                                          ?.projectConfigPath
+                                  ? () => ConfigHandler.instance
+                                      .removeProjectFromInternalConfig(project)
+                                  : null,
+                              icon: Icon(
+                                Icons.delete,
+                              ))
+                        ],
+                      ),
+                    ),
+                  ),
                 )
             ],
           ),

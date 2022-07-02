@@ -7,7 +7,7 @@ class SettingsTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
-      children: [Text('General'), Text('Translations')],
+      children: const [Text('General'), Text('Translations')],
     );
   }
 }
