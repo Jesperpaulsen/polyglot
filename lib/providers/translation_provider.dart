@@ -58,18 +58,22 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     final translationsLoad =
         await TranslationsLoaderIsolate().loadTranslations();
 
+    print(translationsLoad.translationsPerCountry.values.length);
+
     final sortedTranslations = SplayTreeMap<String, TranslationManager>.from(
         translationsLoad.translationsPerCountry, (a, b) {
       final masterA = translationsLoad.translationsPerCountry[a]?.isMaster;
       final masterB = translationsLoad.translationsPerCountry[b]?.isMaster;
-      if (masterA != null && masterA) {
+      if (masterA == true) {
         return -1;
       }
-      if (masterB != null && masterB) {
+      if (masterB == true) {
         return 1;
       }
-      return 0;
+      return 1;
     });
+
+    print(sortedTranslations.values.length);
 
     final newState = state.copyWith(
       translationKeys: translationsLoad.allTranslationKeys,

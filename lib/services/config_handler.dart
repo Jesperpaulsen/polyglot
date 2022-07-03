@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:intl_ui/models/internal_config.dart';
+import 'package:intl_ui/models/language_config.dart';
 import 'package:intl_ui/models/project_config.dart';
 import 'package:intl_ui/services/file_handler.dart';
 
@@ -58,8 +59,6 @@ class ConfigHandler {
       projectConfig = ProjectConfig();
       _storeProjectConfig(projectConfig);
     }
-    print(projectConfig.languageConfigs.entries
-        .map((e) => print(e.value.pathToi18nFile)));
     return projectConfig;
   }
 
@@ -118,6 +117,32 @@ class ConfigHandler {
     if (projectConfig == null) {
       return Future.value();
     }
+    return _storeProjectConfig(projectConfig!);
+  }
+
+  Future<void> addLanguageToProject(String intlCode, String fileName) async {
+    if (projectConfig == null) {
+      return;
+    }
+
+    projectConfig!.languageConfigs[intlCode] = LanguageConfig(
+      pathToi18nFile: fileName,
+      languageCode: intlCode,
+      isMaster: false,
+    );
+
+    final content = <String, dynamic>{};
+
+    if (projectConfig!.translationKeyInFiles != null &&
+        projectConfig!.translationKeyInFiles!.isNotEmpty) {
+      content[projectConfig!.translationKeyInFiles!] = {};
+    }
+
+    await FileHandler.instance.writeJsonFile(
+      content: content,
+      fileName: fileName,
+      directory: translationDirectory,
+    );
     return _storeProjectConfig(projectConfig!);
   }
 

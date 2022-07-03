@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
 import 'package:intl_ui/models/language_config.dart';
 import 'package:intl_ui/models/translation_manager.dart';
 import 'package:intl_ui/services/config_handler.dart';
+import 'package:intl_ui/utils/prettyJsonString.dart';
 
 class IsolateMessage {
   final SendPort port;
@@ -142,9 +142,4 @@ class TranslationWriterIsolate {
       print(e);
     }
   }
-}
-
-String getPrettyJSONString(jsonObject) {
-  var encoder = const JsonEncoder.withIndent("  ");
-  return encoder.convert(jsonObject);
 }

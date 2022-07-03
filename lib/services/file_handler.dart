@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:intl_ui/utils/prettyJsonString.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FileHandler {
@@ -61,6 +62,6 @@ class FileHandler {
       fileName: fileName,
       fullPath: fullPath,
     );
-    return file.writeAsString(jsonEncode(content));
+    return file.writeAsString(getPrettyJSONString(content));
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl_ui/widgets/settings/general_settings.dart';
+import 'package:intl_ui/widgets/settings/SETTING_TYPES.dart';
 import 'package:intl_ui/widgets/settings/settings_tabs.dart';
-import 'package:intl_ui/widgets/settings/translations_settings.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -11,6 +10,8 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  var _activeTab = settingTabs[SETTING_TYPES.GENERAL]!;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -19,9 +20,20 @@ class _SettingsState extends State<Settings> {
           width: 800,
           child: Column(
             children: [
-              SettingsTabs(),
-              Stack(
-                children: [GeneralSettings(), TranslationsSettings()],
+              SettingsTabs(
+                activeIndex: _activeTab.index,
+                onChange: (type) {
+                  final newTab = settingTabs[type];
+                  setState(() {
+                    _activeTab = newTab!;
+                  });
+                },
+              ),
+              IndexedStack(
+                index: _activeTab.index,
+                children: [
+                  for (final setting in settingTabs.values) setting.widget
+                ],
               )
             ],
           )),

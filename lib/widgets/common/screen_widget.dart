@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl_ui/screens/settings.dart';
 import 'package:intl_ui/widgets/common/simple_shortcut.dart';
 import 'package:intl_ui/widgets/dashboard/new_key_dialog.dart';
 
@@ -41,6 +42,13 @@ class _ScreenWidgetState extends State<ScreenWidget> {
     );
   }
 
+  _showSettingsDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (ctx) => const Settings(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SimpleShortcut(
@@ -48,7 +56,9 @@ class _ScreenWidgetState extends State<ScreenWidget> {
         LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyN): () =>
             _showAddNewDialog(context),
         LogicalKeySet(LogicalKeyboardKey.escape): () =>
-            FocusScope.of(context).unfocus()
+            FocusScope.of(context).unfocus(),
+        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.comma): () =>
+            _showSettingsDialog(context),
       },
       child: Scaffold(
         body: Padding(
