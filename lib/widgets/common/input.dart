@@ -8,6 +8,7 @@ class Input extends StatefulWidget {
   final String? hint;
   final TextInputType? type;
   final bool? password;
+  final TextEditingController? controller;
   final void Function(String? value)? onChange;
   final String? Function(String? value, TextEditingController? controller)?
       validator;
@@ -24,6 +25,7 @@ class Input extends StatefulWidget {
     this.validator,
     this.value,
     this.onSubmitted,
+    this.controller,
     this.autofocus = false,
     Key? key,
   }) : super(key: key);
@@ -33,11 +35,14 @@ class Input extends StatefulWidget {
 }
 
 class _InputState extends State<Input> {
-  final _textInputController = TextEditingController();
+  var _textInputController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    if (widget.controller != null) {
+      _textInputController = widget.controller!;
+    }
     if (widget.value != null) {
       _textInputController.text = widget.value!;
     }

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_ui/providers/translation_provider.dart';
 import 'package:intl_ui/services/config_handler.dart';
@@ -16,6 +19,19 @@ class TranslationsSettings extends ConsumerStatefulWidget {
 class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
   String? intlCode;
   String? fileName;
+  var intlCodeToName = <String, String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    initializeKeys();
+  }
+
+  initializeKeys() async {
+    final json =
+        await rootBundle.loadString('assets/internalization_languages.json');
+    intlCodeToName = Map<String, String>.from(jsonDecode(json));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +82,23 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
             children: [
               SizedBox(
                 width: 250,
-                child: Input(
-                  label: 'New intl code',
-                  onChange: (value) => setState(() {
-                    intlCode = value;
-                  }),
+                child: Autocomplete<String>(
+                  fieldViewBuilder: ((context, textEditingController, focusNode,
+                          onFieldSubmitted) =>
+                      Input(
+                        controller: textEditingController,
+                        onSubmitted: (_) => onFieldSubmitted(),
+                      )),
+                  optionsBuilder: (textEditingValue) {
+                    if (textEditingValue.text == '') {
+                      return const Iterable<String>.empty();
+                    }
+                    return intlCodeToName.values.where(
+                      (option) => option.toLowerCase().contains(
+                            textEditingValue.text.toLowerCase(),
+                          ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(
