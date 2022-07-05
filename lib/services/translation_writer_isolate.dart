@@ -36,16 +36,22 @@ class TranslationWriterIsolate {
 
       final manager = translationManagers[intlCode];
 
+     print( translationManagers.containsKey('en'));
+
+      print(translationManagers['nb']);
+
+      translationManagers.forEach((key, value) => print(key));
+
       if (manager == null) {
         throw Exception(
-            'No translation manager matching translation code $intlCode');
+            '[TranslationWriterIsolate] No translation manager matching translation code $intlCode');
       }
       final config =
           ConfigHandler.instance.projectConfig?.languageConfigs[intlCode];
 
       if (config == null) {
         throw Exception(
-            'No translation config matching translation code $intlCode');
+            '[TranslationWriterIsolate] No translation config matching translation code $intlCode');
       }
 
       manager.translations[translationKey] = translation;
@@ -70,7 +76,8 @@ class TranslationWriterIsolate {
     for (final config in allConfigs.values) {
       final manager = translationManagers[config.languageCode];
       if (manager == null) {
-        print('No translations manager found for ${config.languageCode}');
+        print(
+            '[TranslationWriterIsolate] No translations manager found for ${config.languageCode}');
         return;
       }
 

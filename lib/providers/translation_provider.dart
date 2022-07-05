@@ -26,6 +26,13 @@ class TranslationState {
   }
 }
 
+class Test {
+  final String label;
+  final bool master;
+
+  Test({required this.label, required this.master});
+}
+
 class TranslationProvider extends StateNotifier<TranslationState> {
   TranslationProvider() : super(TranslationState()) {
     _setLoading(isLoading: true);
@@ -58,22 +65,9 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     final translationsLoad =
         await TranslationsLoaderIsolate().loadTranslations();
 
-    print(translationsLoad.translationsPerCountry.values.length);
-
     final sortedTranslations = SplayTreeMap<String, TranslationManager>.from(
-        translationsLoad.translationsPerCountry, (a, b) {
-      final masterA = translationsLoad.translationsPerCountry[a]?.isMaster;
-      final masterB = translationsLoad.translationsPerCountry[b]?.isMaster;
-      if (masterA == true) {
-        return -1;
-      }
-      if (masterB == true) {
-        return 1;
-      }
-      return 1;
-    });
-
-    print(sortedTranslations.values.length);
+      translationsLoad.translationsPerCountry,
+    );
 
     final newState = state.copyWith(
       translationKeys: translationsLoad.allTranslationKeys,
@@ -103,7 +97,7 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     final translationManager = state.translations[translationCode];
     if (translationManager == null) {
       throw Exception(
-          'No translation manager matching translation code $translationCode');
+          '[TranslationProvider] No translation manager matching translation code $translationCode');
     }
 
     final translationConfig =
@@ -111,7 +105,7 @@ class TranslationProvider extends StateNotifier<TranslationState> {
 
     if (translationConfig == null) {
       throw Exception(
-          'No translation config matching translation code $translationCode');
+          '[TranslationProvider] No translation config matching translation code $translationCode');
     }
 
     translationManager.translations[translationKey] = newValue;

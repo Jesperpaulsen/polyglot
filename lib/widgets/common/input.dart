@@ -14,6 +14,7 @@ class Input extends StatefulWidget {
       validator;
   final Function(String? value)? onSubmitted;
   final bool autofocus;
+  final FocusNode? focusNode;
 
   const Input({
     this.label,
@@ -27,6 +28,7 @@ class Input extends StatefulWidget {
     this.onSubmitted,
     this.controller,
     this.autofocus = false,
+    this.focusNode,
     Key? key,
   }) : super(key: key);
 
@@ -44,6 +46,14 @@ class _InputState extends State<Input> {
       _textInputController = widget.controller!;
     }
     if (widget.value != null) {
+      _textInputController.text = widget.value!;
+    }
+  }
+
+  @override
+  void didUpdateWidget(Input oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.value != oldWidget.value && widget.value != null) {
       _textInputController.text = widget.value!;
     }
   }
@@ -70,6 +80,7 @@ class _InputState extends State<Input> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      focusNode: widget.focusNode,
       autofocus: widget.autofocus,
       decoration: InputDecoration(
         labelText: widget.label,

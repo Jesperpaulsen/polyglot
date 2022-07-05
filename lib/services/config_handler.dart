@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:intl_ui/models/internal_config.dart';
+import 'package:intl_ui/models/internal_project_config.dart';
 import 'package:intl_ui/models/language_config.dart';
 import 'package:intl_ui/models/project_config.dart';
 import 'package:intl_ui/services/file_handler.dart';
@@ -34,7 +35,11 @@ class ConfigHandler {
       internalConfig = InternalConfig();
       _storeInternalConfig(internalConfig);
     }
+
+    internalConfig.internalProjectConfig ??= InternalProjectConfig(path: '');
+
     translationDirectory = _getProjectConfigDirectory(internalConfig);
+    print(translationDirectory);
     return internalConfig;
   }
 
@@ -44,7 +49,9 @@ class ConfigHandler {
   }
 
   String _getProjectConfigDirectory(InternalConfig internalConfig) {
-    return Directory.fromUri(Uri(path: internalConfig.projectConfigPath))
+    print(internalConfig.internalProjectConfig?.path);
+    return Directory.fromUri(
+            Uri(path: internalConfig.internalProjectConfig?.path))
         .parent
         .path;
   }
@@ -53,7 +60,7 @@ class ConfigHandler {
     InternalConfig internalConfig,
   ) async {
     var projectConfig = await _readProjectConfig(
-      internalConfig.projectConfigPath ?? '',
+      internalConfig.internalProjectConfig?.path ?? '',
     );
     if (projectConfig == null) {
       projectConfig = ProjectConfig();
@@ -70,11 +77,16 @@ class ConfigHandler {
     return _projectConfig;
   }
 
-  Future<void> changePathToProjectConfigFile(String newPath) async {
-    if (internalConfig == null) {
+  Future<void> changeProject(String newPath) async {
+    if (internalConfig?.internalProjectConfig == null) {
       throw Exception('Config is null');
     }
-    internalConfig!.projectConfigPath = newPath;
+
+    final selectedProject = internalConfig!.projects.firstWhere(
+        (element) => element.path == newPath,
+        orElse: () => InternalProjectConfig(path: newPath));
+
+    internalConfig!.internalProjectConfig = selectedProject;
     translationDirectory = _getProjectConfigDirectory(internalConfig!);
     _projectConfig = await _initializeProjectConfig(internalConfig!);
     await saveInternalConfig();
@@ -91,25 +103,26 @@ class ConfigHandler {
     return null;
   }
 
-  Future<void> saveInternalConfig() {
-    if (internalConfig == null) {
-      return Future.value();
+  Future<void> saveInternalConfig() async {
+    if (internalConfig?.internalProjectConfig == null) {
+      return;
     }
-    if (internalConfig!.projectConfigPath != null &&
-        !internalConfig!.projects.contains(internalConfig!.projectConfigPath)) {
-      internalConfig!.projects.add(internalConfig!.projectConfigPath!);
+    print(internalConfig?.internalProjectConfig?.id);
+    if (!internalConfig!.projects.any(
+        (project) => project.id == internalConfig!.internalProjectConfig!.id)) {
+      internalConfig!.projects.add(internalConfig!.internalProjectConfig!);
     }
     return _storeInternalConfig(internalConfig!);
   }
 
-  Future<void> removeProjectFromInternalConfig(String project) async {
-    if (internalConfig?.projectConfigPath == null) {
+  Future<void> removeProjectFromInternalConfig(String projectId) async {
+    if (internalConfig?.internalProjectConfig?.path == null) {
       return;
     }
-    if (project == internalConfig!.projectConfigPath) {
+    if (projectId == internalConfig!.internalProjectConfig?.id) {
       return;
     }
-    internalConfig!.projects.remove(project);
+    internalConfig!.projects.removeWhere((project) => project.id == projectId);
     saveInternalConfig();
   }
 
@@ -164,12 +177,12 @@ class ConfigHandler {
   }
 
   Future<void> _storeProjectConfig(ProjectConfig config) async {
-    if (internalConfig?.projectConfigPath == null) {
+    if (internalConfig?.internalProjectConfig?.path == null) {
       throw Exception('Project config is null');
     }
     try {
       await FileHandler.instance.writeJsonFile(
-          fullPath: internalConfig!.projectConfigPath,
+          fullPath: internalConfig!.internalProjectConfig?.path,
           content: config.toJson());
     } catch (e) {
       print(e);

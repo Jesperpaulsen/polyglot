@@ -1,21 +1,38 @@
+import 'package:intl_ui/models/internal_project_config.dart';
+
 class InternalConfig {
-  String? projectConfigPath;
-  List<String> projects;
+  InternalProjectConfig? internalProjectConfig;
+  var projects = <InternalProjectConfig>[];
 
   InternalConfig({
-    this.projectConfigPath,
-    this.projects = const [],
-  });
+    InternalProjectConfig? internalProjectConfig,
+    this.projects = const <InternalProjectConfig>[],
+  }) : internalProjectConfig =
+            internalProjectConfig ?? InternalProjectConfig(path: '');
 
-  InternalConfig.fromJson(Map<String, dynamic> json)
-      : projectConfigPath = json['configPath'] ?? '',
-        projects =
-            json['projects'] != null ? List<String>.from(json['projects']) : [];
+  InternalConfig.fromJson(Map<String, dynamic> json) {
+    try {
+      internalProjectConfig = json['internalProjectConfig'] != null
+          ? InternalProjectConfig.fromJson(json['internalProjectConfig'])
+          : null;
+    } catch (e) {
+      internalProjectConfig = InternalProjectConfig(path: '');
+    }
+
+    try {
+      projects = json['projects'] != null
+          ? json['projects']
+              .map((project) => InternalProjectConfig.fromJson(project))
+          : <InternalProjectConfig>[];
+    } catch (e) {
+      projects = [];
+    }
+  }
 
   Map<String, dynamic> toJson() {
     return {
-      'configPath': projectConfigPath,
-      'projects': projects,
+      'internalProjectConfig': internalProjectConfig,
+      'projects': projects.map((project) => project.toJson()).toList(),
     };
   }
 }

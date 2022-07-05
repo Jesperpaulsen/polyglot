@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl_ui/models/internal_project_config.dart';
 import 'package:intl_ui/providers/translation_provider.dart';
 import 'package:intl_ui/services/config_handler.dart';
 
@@ -20,7 +21,7 @@ class SelectProject extends ConsumerWidget {
 
   _changePath(String newPath, VoidCallback reloadTranslations,
       BuildContext context) async {
-    await ConfigHandler.instance.changePathToProjectConfigFile(newPath);
+    await ConfigHandler.instance.changeProject(newPath);
     reloadTranslations();
     Navigator.pop(context);
   }
@@ -69,11 +70,16 @@ class SelectProject extends ConsumerWidget {
                   ),
                 ),
               ),
-              for (final project
-                  in ConfigHandler.instance.internalConfig?.projects ?? [])
+              for (final project in ConfigHandler
+                      .instance.internalConfig?.projects
+                      .where((element) =>
+                          element.id !=
+                          ConfigHandler.instance.internalConfig
+                              ?.internalProjectConfig?.id) ??
+                  <InternalProjectConfig>[])
                 GestureDetector(
                   onTap: () =>
-                      _changePath(project, reloadTranslations, context),
+                      _changePath(project.id, reloadTranslations, context),
                   child: DecoratedBox(
                     decoration: const BoxDecoration(
                       border: Border(
@@ -91,16 +97,17 @@ class SelectProject extends ConsumerWidget {
                         children: [
                           MouseRegion(
                             cursor: SystemMouseCursors.click,
-                            child: Text(project),
+                            child: Text(project.path),
                           ),
                           IconButton(
-                              onPressed: project !=
+                              onPressed: project.id !=
                                       ConfigHandler.instance.internalConfig
-                                          ?.projectConfigPath
+                                          ?.internalProjectConfig?.id
                                   ? () => ConfigHandler.instance
-                                      .removeProjectFromInternalConfig(project)
+                                      .removeProjectFromInternalConfig(
+                                          project.id)
                                   : null,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.delete,
                               ))
                         ],
