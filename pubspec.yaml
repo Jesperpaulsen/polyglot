@@ -17,6 +17,7 @@ dependencies:
   flutter_riverpod: ^2.0.0-dev.9
   file_picker: ^4.6.1
   pluto_grid: ^4.0.0
+  dio: ^4.0.6
 
 dev_dependencies:
   flutter_test:

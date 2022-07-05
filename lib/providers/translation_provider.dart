@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_ui/models/translation_manager.dart';
 import 'package:intl_ui/services/config_handler.dart';
+import 'package:intl_ui/services/translation_handler.dart';
 import 'package:intl_ui/services/translation_writer_isolate.dart';
 import 'package:intl_ui/services/translations_loader_isolate.dart';
 
@@ -77,16 +78,75 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     _setState(newState);
   }
 
+  Future<String?> translateAndAddWord({
+    required String translationKey,
+    required String intlCode,
+  }) async {
+    final masterIntlCode = state.translations.firstKey();
+
+    if (masterIntlCode == null) {
+      return null;
+    }
+
+    final masterTranslation =
+        state.translations[masterIntlCode]!.translations[translationKey];
+
+    if (masterTranslation == null) {
+      return null;
+    }
+
+    final translation = await TranslationHandler.instance.translateString(
+      sourceIntlCode: masterIntlCode,
+      targetIntlCode: intlCode,
+      stringToTranslate: masterTranslation,
+    );
+
+    if (translation == null) {
+      return null;
+    }
+
+    await addTranslations(
+      translationKey: translationKey,
+      translations: {
+        intlCode: translation,
+      },
+      shouldReload: false,
+    );
+
+    _insertTranslationToManagerWithoutReload(
+      translationKey: translationKey,
+      translationCode: intlCode,
+      newValue: translation,
+    );
+    return translation;
+  }
+
   Future<void> addTranslations({
     required String translationKey,
     required Map<String, String?> translations,
+    bool shouldReload = true,
   }) async {
     await TranslationWriterIsolate().addTranslations(
       translationKey: translationKey,
       translations: translations,
       translationManagers: state.translations,
     );
-    reloadTranslations();
+    if (shouldReload) reloadTranslations();
+  }
+
+  TranslationManager _insertTranslationToManagerWithoutReload(
+      {required String translationKey,
+      required String translationCode,
+      required String newValue}) {
+    final translationManager = state.translations[translationCode];
+    if (translationManager == null) {
+      throw Exception(
+          '[TranslationProvider] No translation manager matching translation code $translationCode');
+    }
+
+    translationManager.translations[translationKey] = newValue;
+    _setState(state);
+    return translationManager;
   }
 
   Future<void> updateTranslation({
@@ -94,11 +154,11 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     required String translationCode,
     required String newValue,
   }) async {
-    final translationManager = state.translations[translationCode];
-    if (translationManager == null) {
-      throw Exception(
-          '[TranslationProvider] No translation manager matching translation code $translationCode');
-    }
+    final translationManager = _insertTranslationToManagerWithoutReload(
+      translationKey: translationKey,
+      translationCode: translationCode,
+      newValue: newValue,
+    );
 
     final translationConfig =
         ConfigHandler.instance.projectConfig?.languageConfigs[translationCode];
@@ -107,9 +167,6 @@ class TranslationProvider extends StateNotifier<TranslationState> {
       throw Exception(
           '[TranslationProvider] No translation config matching translation code $translationCode');
     }
-
-    translationManager.translations[translationKey] = newValue;
-    _setState(state);
 
     return TranslationWriterIsolate()
         .sortAndWriteTranslationFileWithSeparateIsolate(

@@ -36,12 +36,6 @@ class TranslationWriterIsolate {
 
       final manager = translationManagers[intlCode];
 
-     print( translationManagers.containsKey('en'));
-
-      print(translationManagers['nb']);
-
-      translationManagers.forEach((key, value) => print(key));
-
       if (manager == null) {
         throw Exception(
             '[TranslationWriterIsolate] No translation manager matching translation code $intlCode');

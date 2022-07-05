@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_ui/providers/translation_provider.dart';
+import 'package:intl_ui/services/translation_handler.dart';
 import 'package:intl_ui/widgets/common/button.dart';
 import 'package:intl_ui/widgets/common/input.dart';
 
 class NewKeyDialog extends ConsumerStatefulWidget {
   final String initialValue;
   final VoidCallback onDone;
-  const NewKeyDialog(
-      {required this.initialValue, required this.onDone, Key? key})
-      : super(key: key);
+  const NewKeyDialog({
+    required this.initialValue,
+    required this.onDone,
+    Key? key,
+  }) : super(key: key);
 
   @override
   ConsumerState<NewKeyDialog> createState() => _NewKeyDialogState();
@@ -122,7 +125,21 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
                           icon: const Icon(
                             Icons.translate,
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            final result = await TranslationHandler.instance
+                                .translateString(
+                              stringToTranslate: _translations[
+                                      translations.values.first.intlCode] ??
+                                  '',
+                              sourceIntlCode:
+                                  translations.values.first.intlCode,
+                              targetIntlCode: translation.intlCode,
+                            );
+
+                            setState(() {
+                              _translations[translation.intlCode] = result;
+                            });
+                          },
                           iconSize: 18,
                           color: Colors.blue,
                           padding: const EdgeInsets.all(0),

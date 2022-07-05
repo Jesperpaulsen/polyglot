@@ -21,7 +21,13 @@ class _GridState extends ConsumerState<Grid> {
   var _internalVersion = 0;
 
   _buildGrid() {
-    final builderResult = GridBuilder(context).buildGridFromTranslationKeys(
+    final translateAndAddWord =
+        ref.read(TranslationProvider.provider.notifier).translateAndAddWord;
+
+    final builderResult = GridBuilder(
+      context,
+      translateAndAddWord,
+    ).buildGridFromTranslationKeys(
       translationKeys: widget.translationState.translationKeys,
       translationManagers: widget.translationState.translations,
     );

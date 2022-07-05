@@ -15,8 +15,15 @@ class GridBuilderResult {
 
 class GridBuilder {
   final BuildContext _context;
+  final Future<String?> Function({
+    required String translationKey,
+    required String intlCode,
+  }) translateString;
 
-  GridBuilder(this._context);
+  GridBuilder(
+    this._context,
+    this.translateString,
+  );
 
   GridBuilderResult buildGridFromTranslationKeys({
     required Set<String> translationKeys,
@@ -107,11 +114,19 @@ class GridBuilder {
                       icon: const Icon(
                         Icons.translate,
                       ),
-                      onPressed: () {
-                        rendererContext.stateManager.insertRows(
-                          rendererContext.rowIdx,
-                          [rendererContext.stateManager.getNewRow()],
+                      onPressed: () async {
+                        final translationKey =
+                            rendererContext.row.cells['translation_key']!.value;
+                        final intlCode = translationManager.intlCode;
+                        final translation = await translateString(
+                          translationKey: translationKey,
+                          intlCode: intlCode,
                         );
+
+                        rendererContext.stateManager.changeCellValue(
+                            rendererContext
+                                .row.cells[rendererContext.column.field]!,
+                            translation);
                       },
                       iconSize: 18,
                       color: Colors.blue,

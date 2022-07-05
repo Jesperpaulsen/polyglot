@@ -6,6 +6,7 @@ import 'package:intl_ui/models/internal_project_config.dart';
 import 'package:intl_ui/models/language_config.dart';
 import 'package:intl_ui/models/project_config.dart';
 import 'package:intl_ui/services/file_handler.dart';
+import 'package:intl_ui/services/translation_handler.dart';
 
 class ConfigHandler {
   final _isInitialized = Completer();
@@ -37,10 +38,16 @@ class ConfigHandler {
     }
 
     internalConfig.internalProjectConfig ??= InternalProjectConfig(path: '');
-
+    _makeSureInternalConfigHasOwnProject(internalConfig);
     translationDirectory = _getProjectConfigDirectory(internalConfig);
-    print(translationDirectory);
     return internalConfig;
+  }
+
+  void _makeSureInternalConfigHasOwnProject(InternalConfig internalConfig) {
+    if (!internalConfig.projects.any(
+        (project) => project.id == internalConfig.internalProjectConfig!.id)) {
+      internalConfig.projects.add(internalConfig.internalProjectConfig!);
+    }
   }
 
   Future<void> refreshConfig() async {
@@ -49,7 +56,6 @@ class ConfigHandler {
   }
 
   String _getProjectConfigDirectory(InternalConfig internalConfig) {
-    print(internalConfig.internalProjectConfig?.path);
     return Directory.fromUri(
             Uri(path: internalConfig.internalProjectConfig?.path))
         .parent
@@ -62,10 +68,12 @@ class ConfigHandler {
     var projectConfig = await _readProjectConfig(
       internalConfig.internalProjectConfig?.path ?? '',
     );
+
     if (projectConfig == null) {
       projectConfig = ProjectConfig();
       _storeProjectConfig(projectConfig);
     }
+
     return projectConfig;
   }
 
@@ -89,6 +97,9 @@ class ConfigHandler {
     internalConfig!.internalProjectConfig = selectedProject;
     translationDirectory = _getProjectConfigDirectory(internalConfig!);
     _projectConfig = await _initializeProjectConfig(internalConfig!);
+
+    TranslationHandler.instance.initialize();
+
     await saveInternalConfig();
   }
 
@@ -107,11 +118,9 @@ class ConfigHandler {
     if (internalConfig?.internalProjectConfig == null) {
       return;
     }
-    print(internalConfig?.internalProjectConfig?.id);
-    if (!internalConfig!.projects.any(
-        (project) => project.id == internalConfig!.internalProjectConfig!.id)) {
-      internalConfig!.projects.add(internalConfig!.internalProjectConfig!);
-    }
+
+    _makeSureInternalConfigHasOwnProject(internalConfig!);
+
     return _storeInternalConfig(internalConfig!);
   }
 
@@ -126,9 +135,9 @@ class ConfigHandler {
     saveInternalConfig();
   }
 
-  Future<void> saveProjectConfig() {
+  Future<void> saveProjectConfig() async {
     if (projectConfig == null) {
-      return Future.value();
+      return;
     }
     return _storeProjectConfig(projectConfig!);
   }
@@ -141,7 +150,7 @@ class ConfigHandler {
     projectConfig!.languageConfigs[intlCode] = LanguageConfig(
       pathToi18nFile: fileName,
       languageCode: intlCode,
-      isMaster: false,
+      isMaster: projectConfig?.languageConfigs.isEmpty ?? true,
     );
 
     final content = <String, dynamic>{};

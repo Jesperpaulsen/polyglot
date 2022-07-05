@@ -16,12 +16,17 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
   var path = ConfigHandler.instance.internalConfig?.internalProjectConfig?.path;
   var translationKeyInFiles =
       ConfigHandler.instance.projectConfig?.translationKeyInFiles;
+  var translationApiKey = ConfigHandler
+      .instance.internalConfig?.internalProjectConfig?.translateApiKey;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Settings'),
+        const Text(
+          'General Settings',
+          style: TextStyle(fontSize: 24),
+        ),
         const SizedBox(height: 20),
         FilePickerInput(
           label: 'Project config path',
@@ -38,14 +43,33 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
         const SizedBox(
           height: 10,
         ),
-        Input(
-          label: 'Key used in translation files',
-          value: ConfigHandler.instance.projectConfig?.translationKeyInFiles,
-          onChange: (newTranslationKey) {
-            setState(() {
-              translationKeyInFiles = newTranslationKey;
-            });
-          },
+        SizedBox(
+          width: 400,
+          child: Input(
+            label: 'Key used in translation files',
+            value: ConfigHandler.instance.projectConfig?.translationKeyInFiles,
+            onChange: (newTranslationKey) {
+              setState(() {
+                translationKeyInFiles = newTranslationKey;
+              });
+            },
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        SizedBox(
+          width: 400,
+          child: Input(
+            label: 'Google Translation API key',
+            value: ConfigHandler.instance.internalConfig?.internalProjectConfig
+                ?.translateApiKey,
+            onChange: (newTranslationApiKey) {
+              setState(() {
+                translationApiKey = newTranslationApiKey;
+              });
+            },
+          ),
         ),
         const SizedBox(
           height: 20,
@@ -57,6 +81,8 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
                 path!;
             ConfigHandler.instance.projectConfig?.translationKeyInFiles =
                 translationKeyInFiles;
+            ConfigHandler.instance.internalConfig?.internalProjectConfig
+                ?.translateApiKey = translationApiKey;
             ConfigHandler.instance.saveInternalConfig();
           },
         )
