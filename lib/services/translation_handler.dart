@@ -88,7 +88,7 @@ class TranslationHandler {
   }
 
   Future<Map<String, String?>> translateBatch({
-    required Map<String, String> masterTranslations,
+    required Map<String, String?> masterTranslations,
     Map<String, String?>? existingTranslations,
     required String sourceIntlCode,
     required String targetIntlCode,
@@ -121,7 +121,7 @@ class TranslationHandler {
 class IsolateMessage {
   final SendPort port;
   final String apiKey;
-  final Map<String, String> masterTranslations;
+  final Map<String, String?> masterTranslations;
   final Map<String, String?>? existingTranslations;
   final String sourceIntlCode;
   final String targetIntlCode;
@@ -139,7 +139,7 @@ class IsolateMessage {
 Future<void> _translateBatchTextOnIsolate(IsolateMessage message) async {
   final client = TranslationClient(apiKey: message.apiKey);
 
-  const separator = '*_:;"#&%%/)(=%#""#)';
+  const separator = '*@_::_;:!';
 
   final parts = <String>[];
   var counter = 0;
@@ -157,7 +157,7 @@ Future<void> _translateBatchTextOnIsolate(IsolateMessage message) async {
     }
 
     if (counter < 20000) {
-      currentString += '$separator$entry.word';
+      currentString += '${entry.value}$separator';
       counter += currentString.length;
     } else {
       parts.add(currentString);
@@ -169,6 +169,7 @@ Future<void> _translateBatchTextOnIsolate(IsolateMessage message) async {
   final futures = <Future<String?>>[];
 
   for (final part in parts) {
+    print(part);
     futures.add(client.translateString(
       stringToTranslate: part,
       sourceLanguage: message.sourceIntlCode,
@@ -182,12 +183,39 @@ Future<void> _translateBatchTextOnIsolate(IsolateMessage message) async {
 
   for (final result in results) {
     if (result == null) continue;
-    allParts.addAll(result.split(separator));
+
+    final splittedWords = <String>[];
+    var currentWord = '';
+    var isMatchingSeparator = false;
+    var separatorIndex = 0;
+    for (var i = 0; i < result.length; i++) {
+      final currentChar = result[i];
+
+      if (isMatchingSeparator && currentChar == ' ') {
+        continue;
+      }
+
+      if (separatorIndex == separator.length - 1) {
+        splittedWords.add(currentWord);
+        currentWord = '';
+        separatorIndex = 0;
+      } else if (currentChar == separator[separatorIndex]) {
+        isMatchingSeparator = true;
+        separatorIndex++;
+      } else {
+        currentWord += currentChar;
+      }
+    }
+
+    print(currentWord);
+    //allParts.addAll(result.split(separator));
+    allParts.add(currentWord);
   }
 
+  print(allParts.length);
+  print(masterTranslationEntriesAsList.length);
   for (var i = 0; i < masterTranslationEntriesAsList.length; i++) {
     final key = masterTranslationEntriesAsList[i].key;
-
     resultMap[key] = allParts[i];
   }
 
