@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl_ui/screens/settings.dart';
-import 'package:intl_ui/widgets/common/simple_shortcut.dart';
-import 'package:intl_ui/widgets/dashboard/new_key_dialog.dart';
+import 'package:polyglot/screens/settings.dart';
+import 'package:polyglot/widgets/common/simple_shortcut.dart';
+import 'package:polyglot/widgets/dashboard/new_key_dialog.dart';
 
 class ScreenWidget extends StatefulWidget {
   final Widget body;

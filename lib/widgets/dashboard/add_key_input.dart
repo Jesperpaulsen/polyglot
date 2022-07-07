@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl_ui/widgets/common/button.dart';
-import 'package:intl_ui/widgets/common/input.dart';
-import 'package:intl_ui/widgets/dashboard/new_key_dialog.dart';
+import 'package:polyglot/widgets/common/button.dart';
+import 'package:polyglot/widgets/common/input.dart';
+import 'package:polyglot/widgets/dashboard/new_key_dialog.dart';
 
 class AddKeyInput extends StatefulWidget {
   const AddKeyInput({Key? key}) : super(key: key);

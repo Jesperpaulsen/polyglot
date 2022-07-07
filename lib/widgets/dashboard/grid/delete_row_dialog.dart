@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/providers/translation_provider.dart';
-import 'package:intl_ui/widgets/common/button.dart';
+import 'package:polyglot/providers/translation_provider.dart';
+import 'package:polyglot/widgets/common/button.dart';
 
 class DeleteRowDialog extends ConsumerWidget {
   final String translationKey;

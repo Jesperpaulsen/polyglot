@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl_ui/widgets/settings/general_settings.dart';
-import 'package:intl_ui/widgets/settings/translations_settings.dart';
+import 'package:polyglot/widgets/settings/general_settings.dart';
+import 'package:polyglot/widgets/settings/translations_settings.dart';
 
 enum SETTING_TYPES { GENERAL, TRANSLATIONS }
 

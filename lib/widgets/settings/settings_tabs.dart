@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl_ui/widgets/settings/SETTING_TYPES.dart';
+import 'package:polyglot/widgets/settings/SETTING_TYPES.dart';
 
 class SettingsTabs extends StatelessWidget {
   final int activeIndex;

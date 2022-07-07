@@ -1,27 +1,31 @@
-import 'dart:collection';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/models/translation_manager.dart';
-import 'package:intl_ui/services/config_handler.dart';
-import 'package:intl_ui/services/translation_handler.dart';
-import 'package:intl_ui/services/translation_writer_isolate.dart';
-import 'package:intl_ui/services/translations_loader_isolate.dart';
+import 'package:polyglot/models/translation_manager.dart';
+import 'package:polyglot/services/config_handler.dart';
+import 'package:polyglot/services/translation_handler.dart';
+import 'package:polyglot/services/translation_writer_isolate.dart';
+import 'package:polyglot/services/translations_loader_isolate.dart';
 
 class TranslationState {
   var translationKeys = <String>{};
-  var translations = SplayTreeMap<String, TranslationManager>();
+  var translations = <String, TranslationManager>{};
+  var sortedManagersKeys = <String>[];
+  String? masterIntlCode;
   var loading = false;
   var version = 0;
 
   TranslationState copyWith({
     Set<String>? translationKeys,
-    SplayTreeMap<String, TranslationManager>? translations,
+    Map<String, TranslationManager>? translations,
     bool? loading,
+    String? masterIntlCode,
+    List<String>? sortedManagersKeys,
   }) {
     final copy = TranslationState();
     copy.translationKeys = translationKeys ?? this.translationKeys;
     copy.translations = translations ?? this.translations;
     copy.loading = loading ?? this.loading;
+    copy.masterIntlCode = masterIntlCode ?? this.masterIntlCode;
+    copy.sortedManagersKeys = sortedManagersKeys ?? this.sortedManagersKeys;
     copy.version = version;
     return copy;
   }
@@ -56,8 +60,10 @@ class TranslationProvider extends StateNotifier<TranslationState> {
 
   Future<void> reloadTranslations() async {
     final newState = state.copyWith(
-        translations: SplayTreeMap<String, TranslationManager>(),
-        translationKeys: <String>{});
+      translations: <String, TranslationManager>{},
+      translationKeys: <String>{},
+      sortedManagersKeys: <String>[],
+    );
     _setState(newState);
     await _initializeTranslations();
   }
@@ -66,13 +72,17 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     final translationsLoad =
         await TranslationsLoaderIsolate().loadTranslations();
 
-    final sortedTranslations = SplayTreeMap<String, TranslationManager>.from(
-      translationsLoad.translationsPerCountry,
-    );
+    final sortedTranslations = translationsLoad.translationsPerCountry.entries
+        .toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
+
+    final sortedKeys = sortedTranslations.map((e) => e.key).toList();
 
     final newState = state.copyWith(
       translationKeys: translationsLoad.allTranslationKeys,
-      translations: sortedTranslations,
+      translations: translationsLoad.translationsPerCountry,
+      masterIntlCode: translationsLoad.masterIntlCode,
+      sortedManagersKeys: sortedKeys,
     );
     newState.version = state.version + 1;
     _setState(newState);
@@ -82,9 +92,9 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     required String translationKey,
     required String intlCode,
   }) async {
-    final masterIntlCode = state.translations.firstKey();
+    final masterIntlCode = state.masterIntlCode;
 
-    if (masterIntlCode == null) {
+    if (masterIntlCode == null || state.translations[masterIntlCode] == null) {
       return null;
     }
 

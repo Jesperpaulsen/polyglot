@@ -1,4 +1,4 @@
-import 'package:intl_ui/utils/get_random_id.dart';
+import 'package:polyglot/utils/get_random_id.dart';
 
 class InternalProjectConfig {
   String id;

@@ -1,4 +1,4 @@
-import 'package:intl_ui/models/internal_project_config.dart';
+import 'package:polyglot/models/internal_project_config.dart';
 
 class InternalConfig {
   InternalProjectConfig? internalProjectConfig;

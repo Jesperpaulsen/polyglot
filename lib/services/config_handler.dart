@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:intl_ui/models/internal_config.dart';
-import 'package:intl_ui/models/internal_project_config.dart';
-import 'package:intl_ui/models/language_config.dart';
-import 'package:intl_ui/models/project_config.dart';
-import 'package:intl_ui/services/file_handler.dart';
-import 'package:intl_ui/services/translation_handler.dart';
+import 'package:polyglot/models/internal_config.dart';
+import 'package:polyglot/models/internal_project_config.dart';
+import 'package:polyglot/models/language_config.dart';
+import 'package:polyglot/models/project_config.dart';
+import 'package:polyglot/services/file_handler.dart';
+import 'package:polyglot/services/translation_handler.dart';
 
 class ConfigHandler {
   final _isInitialized = Completer();

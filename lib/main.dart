@@ -1,9 +1,9 @@
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/screens/dashboard.dart';
-import 'package:intl_ui/services/config_handler.dart';
-import 'package:intl_ui/services/language_code_to_readable_name.dart';
+import 'package:polyglot/screens/dashboard.dart';
+import 'package:polyglot/services/config_handler.dart';
+import 'package:polyglot/services/language_code_to_readable_name.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,4 +1,4 @@
-import 'package:intl_ui/models/language_config.dart';
+import 'package:polyglot/models/language_config.dart';
 
 class ProjectConfig {
   late Map<String, LanguageConfig> languageConfigs;

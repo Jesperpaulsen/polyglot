@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:intl_ui/models/language_config.dart';
-import 'package:intl_ui/models/translation_manager.dart';
-import 'package:intl_ui/services/config_handler.dart';
-import 'package:intl_ui/utils/prettyJsonString.dart';
+import 'package:polyglot/models/language_config.dart';
+import 'package:polyglot/models/translation_manager.dart';
+import 'package:polyglot/services/config_handler.dart';
+import 'package:polyglot/utils/prettyJsonString.dart';
 
 class IsolateMessage {
   final SendPort port;

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:intl_ui/services/config_handler.dart';
+import 'package:polyglot/services/config_handler.dart';
 
 class TranslationClient {
   final String apiKey;
@@ -11,7 +11,9 @@ class TranslationClient {
   }
 
   _onRequestInterceptor(
-      RequestOptions options, RequestInterceptorHandler handler) {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) {
     options.headers = {
       'Content-Type': 'application/json; charset=UTF-8',
     };

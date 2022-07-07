@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/services/config_handler.dart';
-import 'package:intl_ui/widgets/common/button.dart';
-import 'package:intl_ui/widgets/common/file_picker_input.dart';
-import 'package:intl_ui/widgets/common/input.dart';
+import 'package:polyglot/services/config_handler.dart';
+import 'package:polyglot/widgets/common/button.dart';
+import 'package:polyglot/widgets/common/file_picker_input.dart';
+import 'package:polyglot/widgets/common/input.dart';
 
 class GeneralSettings extends ConsumerStatefulWidget {
   const GeneralSettings({Key? key}) : super(key: key);

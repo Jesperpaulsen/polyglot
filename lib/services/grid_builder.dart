@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl_ui/models/translation_manager.dart';
-import 'package:intl_ui/widgets/dashboard/grid/delete_row_dialog.dart';
+import 'package:polyglot/models/translation_manager.dart';
+import 'package:polyglot/widgets/dashboard/grid/delete_row_dialog.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 class GridBuilderResult {
@@ -27,6 +27,7 @@ class GridBuilder {
 
   GridBuilderResult buildGridFromTranslationKeys({
     required Set<String> translationKeys,
+    required List<String> sortedManagersKeys,
     required Map<String, TranslationManager> translationManagers,
   }) {
     final columns = [
@@ -79,7 +80,8 @@ class GridBuilder {
     ];
     final rows = <PlutoRow>[];
 
-    for (final translationManager in translationManagers.values) {
+    for (final sortedKey in sortedManagersKeys) {
+      final translationManager = translationManagers[sortedKey]!;
       columns.add(
         PlutoColumn(
           title:

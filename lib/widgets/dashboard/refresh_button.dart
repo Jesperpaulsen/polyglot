@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/providers/translation_provider.dart';
-import 'package:intl_ui/services/config_handler.dart';
+import 'package:polyglot/providers/translation_provider.dart';
+import 'package:polyglot/services/config_handler.dart';
 
 class RefreshButton extends ConsumerWidget {
   const RefreshButton({Key? key}) : super(key: key);

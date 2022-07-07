@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl_ui/widgets/settings/SETTING_TYPES.dart';
-import 'package:intl_ui/widgets/settings/settings_tabs.dart';
+import 'package:polyglot/widgets/settings/SETTING_TYPES.dart';
+import 'package:polyglot/widgets/settings/settings_tabs.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);

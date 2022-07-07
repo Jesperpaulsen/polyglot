@@ -1,4 +1,4 @@
-import 'package:intl_ui/services/language_code_to_readable_name.dart';
+import 'package:polyglot/services/language_code_to_readable_name.dart';
 
 class LanguageConfig {
   String pathToi18nFile;

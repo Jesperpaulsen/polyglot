@@ -1,4 +1,4 @@
-import 'package:intl_ui/services/language_code_to_readable_name.dart';
+import 'package:polyglot/services/language_code_to_readable_name.dart';
 
 class TranslationManager extends Comparable<TranslationManager> {
   final Map<String, String?> translations;
@@ -18,8 +18,8 @@ class TranslationManager extends Comparable<TranslationManager> {
   @override
   int compareTo(TranslationManager other) {
     if (isMaster == true) {
-      return 1;
+      return -1;
     }
-    return -1;
+    return 1;
   }
 }

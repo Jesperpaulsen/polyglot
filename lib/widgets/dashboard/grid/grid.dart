@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/providers/translation_provider.dart';
-import 'package:intl_ui/services/grid_builder.dart';
+import 'package:polyglot/providers/translation_provider.dart';
+import 'package:polyglot/services/grid_builder.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 class Grid extends ConsumerStatefulWidget {
@@ -30,6 +30,7 @@ class _GridState extends ConsumerState<Grid> {
     ).buildGridFromTranslationKeys(
       translationKeys: widget.translationState.translationKeys,
       translationManagers: widget.translationState.translations,
+      sortedManagersKeys: widget.translationState.sortedManagersKeys,
     );
     setState(() {
       rows = builderResult.rows;
@@ -73,7 +74,6 @@ class _GridState extends ConsumerState<Grid> {
         ),
       ),
       onChanged: (event) {
-        print(event);
         if (event.columnIdx == 0) {
           translationProvider.updateTranslationKey(
             oldTranslationKey: event.oldValue,

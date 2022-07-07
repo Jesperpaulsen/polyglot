@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/providers/translation_provider.dart';
-import 'package:intl_ui/services/translation_handler.dart';
-import 'package:intl_ui/widgets/common/button.dart';
-import 'package:intl_ui/widgets/common/input.dart';
+import 'package:polyglot/providers/translation_provider.dart';
+import 'package:polyglot/services/translation_handler.dart';
+import 'package:polyglot/widgets/common/button.dart';
+import 'package:polyglot/widgets/common/input.dart';
 
 class NewKeyDialog extends ConsumerStatefulWidget {
   final String initialValue;

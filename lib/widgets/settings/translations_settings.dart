@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_ui/providers/translation_provider.dart';
-import 'package:intl_ui/services/config_handler.dart';
-import 'package:intl_ui/widgets/common/button.dart';
-import 'package:intl_ui/widgets/common/input.dart';
+import 'package:polyglot/providers/translation_provider.dart';
+import 'package:polyglot/services/config_handler.dart';
+import 'package:polyglot/widgets/common/button.dart';
+import 'package:polyglot/widgets/common/input.dart';
 
 class AutocompleteOption {
   final String intlCode;
@@ -56,23 +56,25 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
           style: TextStyle(fontSize: 24),
         ),
         ...[
-          for (final translation in translationState.translations.values)
+          for (final managerKey in translationState.sortedManagersKeys)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Text(translation.intlLanguageName ?? ''),
+                  Text(translationState
+                          .translations[managerKey]!.intlLanguageName ??
+                      ''),
                   const SizedBox(
                     width: 20,
                   ),
                   Text(
-                    translation.intlCode,
+                    translationState.translations[managerKey]!.intlCode,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  if (translation.isMaster)
+                  if (translationState.translations[managerKey]!.isMaster)
                     const Text(
                       'Master',
                       style: TextStyle(color: Colors.teal),

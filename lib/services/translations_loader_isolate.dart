@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:intl_ui/models/language_config.dart';
-import 'package:intl_ui/models/translation_manager.dart';
-import 'package:intl_ui/services/config_handler.dart';
+import 'package:polyglot/models/language_config.dart';
+import 'package:polyglot/models/translation_manager.dart';
+import 'package:polyglot/services/config_handler.dart';
 
 class TranslationLoad {
   final Set<String> translationKeys;
@@ -26,6 +26,7 @@ class IsolateMessage {
 }
 
 class AllTranslationsLoadResult {
+  String? masterIntlCode;
   final allTranslationKeys = <String>{};
   final translationsPerCountry = <String, TranslationManager>{};
 }
@@ -40,6 +41,9 @@ class TranslationsLoaderIsolate {
       futures.add(
         _loadTranslationFileWithSeparateIsolate(languageConfig)
             .then((translationLoad) {
+          if (languageConfig.isMaster && loadResult.masterIntlCode == null) {
+            loadResult.masterIntlCode = languageConfig.languageCode;
+          }
           loadResult.allTranslationKeys.addAll(translationLoad.translationKeys);
           loadResult.translationsPerCountry[languageConfig.languageCode] =
               TranslationManager(
