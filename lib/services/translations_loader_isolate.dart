@@ -98,8 +98,12 @@ class TranslationsLoaderIsolate {
       }
 
       if (json == null) {
-        port.send(TranslationLoad(
-            translationKeys: <String>{}, translations: <String, String>{}));
+        port.send(
+          TranslationLoad(
+            translationKeys: <String>{},
+            translations: <String, String>{},
+          ),
+        );
         return;
       }
 

@@ -72,6 +72,8 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
   @override
   Widget build(BuildContext context) {
     final translations = ref.read(TranslationProvider.provider).translations;
+    final sortedManagersKeys =
+        ref.read(TranslationProvider.provider).sortedManagersKeys;
     return AlertDialog(
       content: Container(
         width: 500,
@@ -103,7 +105,7 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
               'Translations:',
               style: TextStyle(fontSize: 15),
             ),
-            for (var translation in translations.values)
+            for (final managerKey in sortedManagersKeys)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: SizedBox(
@@ -111,16 +113,17 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
                     children: [
                       Expanded(
                         child: Input(
-                          value: _translations[translation.intlCode] ?? '',
-                          label: translation.intlLanguageName ?? '',
+                          value: _translations[managerKey] ?? '',
+                          label:
+                              translations[managerKey]!.intlLanguageName ?? '',
                           onChange: (value) {
-                            _translations[translation.intlCode] = value;
-                            autoFilledTranslations.remove(translation.intlCode);
+                            _translations[managerKey] = value;
+                            autoFilledTranslations.remove(managerKey);
                           },
                           onSubmitted: (_) => _storeTranslations(context),
                         ),
                       ),
-                      if (!translation.isMaster)
+                      if (!translations[managerKey]!.isMaster)
                         IconButton(
                           icon: const Icon(
                             Icons.translate,
@@ -133,11 +136,11 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
                                   '',
                               sourceIntlCode:
                                   translations.values.first.intlCode,
-                              targetIntlCode: translation.intlCode,
+                              targetIntlCode: managerKey,
                             );
 
                             setState(() {
-                              _translations[translation.intlCode] = result;
+                              _translations[managerKey] = result;
                             });
                           },
                           iconSize: 18,
