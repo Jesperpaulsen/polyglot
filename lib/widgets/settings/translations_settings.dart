@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:polyglot/providers/translation_provider.dart';
 import 'package:polyglot/services/config_handler.dart';
-import 'package:polyglot/services/translation_handler.dart';
 import 'package:polyglot/widgets/common/button.dart';
 import 'package:polyglot/widgets/common/input.dart';
 
@@ -82,14 +81,7 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
                     )
                   else
                     IconButton(
-                      onPressed: () =>
-                          TranslationHandler.instance.translateBatch(
-                        masterTranslations: translationState
-                            .translations[translationState.masterIntlCode]!
-                            .translations,
-                        existingTranslations: translationState
-                            .translations[managerKey]?.translations,
-                        sourceIntlCode: translationState.masterIntlCode!,
+                      onPressed: () => translationProvider.batchTranslation(
                         targetIntlCode: managerKey,
                       ),
                       icon: const Icon(Icons.translate),

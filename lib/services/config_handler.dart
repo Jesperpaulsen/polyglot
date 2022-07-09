@@ -6,7 +6,7 @@ import 'package:polyglot/models/internal_project_config.dart';
 import 'package:polyglot/models/language_config.dart';
 import 'package:polyglot/models/project_config.dart';
 import 'package:polyglot/services/file_handler.dart';
-import 'package:polyglot/services/translation_handler.dart';
+import 'package:polyglot/services/translation_handler/translation_handler.dart';
 
 class ConfigHandler {
   final _isInitialized = Completer();

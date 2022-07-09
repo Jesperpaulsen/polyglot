@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:polyglot/models/translation_manager.dart';
 import 'package:polyglot/services/config_handler.dart';
-import 'package:polyglot/services/translation_handler.dart';
+import 'package:polyglot/services/translation_handler/translation_handler.dart';
 import 'package:polyglot/services/translation_writer_isolate.dart';
 import 'package:polyglot/services/translations_loader_isolate.dart';
 
@@ -144,10 +144,11 @@ class TranslationProvider extends StateNotifier<TranslationState> {
     if (shouldReload) reloadTranslations();
   }
 
-  TranslationManager _insertTranslationToManagerWithoutReload(
-      {required String translationKey,
-      required String translationCode,
-      required String newValue}) {
+  TranslationManager _insertTranslationToManagerWithoutReload({
+    required String translationKey,
+    required String translationCode,
+    required String newValue,
+  }) {
     final translationManager = state.translations[translationCode];
     if (translationManager == null) {
       throw Exception(
@@ -202,6 +203,38 @@ class TranslationProvider extends StateNotifier<TranslationState> {
       newTranslationKey: newTranslationKey,
       translationManagers: state.translations,
     );
+  }
+
+  Future<void> batchTranslation({required String targetIntlCode}) async {
+    final newTranslations = await TranslationHandler.instance.translateBatch(
+      masterTranslations:
+          state.translations[state.masterIntlCode]!.translations,
+      existingTranslations: state.translations[targetIntlCode]?.translations,
+      sourceIntlCode: state.masterIntlCode!,
+      targetIntlCode: targetIntlCode,
+    );
+
+    final translationManager = state.translations[targetIntlCode];
+
+    if (translationManager == null) {
+      throw Exception(
+          '[TranslationProvider] No translation manager matching translation code $targetIntlCode');
+    }
+
+    translationManager.translations = newTranslations;
+
+    final translationConfig =
+        ConfigHandler.instance.projectConfig?.languageConfigs[targetIntlCode];
+
+    if (translationConfig == null) {
+      throw Exception(
+          '[TranslationProvider] No translation config matching translation code $targetIntlCode');
+    }
+
+    await TranslationWriterIsolate()
+        .sortAndWriteTranslationFileWithSeparateIsolate(
+            translationConfig, translationManager);
+    reloadTranslations();
   }
 
   static final provider =

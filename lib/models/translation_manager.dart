@@ -1,7 +1,7 @@
 import 'package:polyglot/services/language_code_to_readable_name.dart';
 
 class TranslationManager extends Comparable<TranslationManager> {
-  final Map<String, String?> translations;
+  Map<String, String?> translations;
   final String intlCode;
   late final String? intlLanguageName;
   final bool isMaster;
