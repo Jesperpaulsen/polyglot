@@ -1,0 +1,25 @@
+name: 'Release'
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+      - name: Create a Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.get-latest-tag.outputs.tag }}
+          token: ${{ secrets.CREATE_RELEASE_TOKEN }}
+          name: ${{ steps.get-latest-tag.outputs.tag }}
+        env:
+          TAG_NAME: '${{ env.TAG_NAME }}'

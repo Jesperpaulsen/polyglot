@@ -1,0 +1,24 @@
+name: Tag
+
+on:
+  push:
+    branches:
+      - "dev"
+
+jobs:
+  deploy_android:
+    name: Update build number
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Get latest tag
+        run: echo "TAG_NAME=$(git tag --sort=committerdate | grep -E '^v[0-9]')" >> $GITHUB_ENV
+      - name: test env
+        run: echo $TAG_NAME
+      - name: test env2
+        run: echo ${{env.TAG_NAME}}
+      - name: Update tag
+        run: sh ./.github/scripts/update_version.sh
+        env:
+          GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
