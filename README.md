@@ -1,16 +1,33 @@
-# intl_ui
+# Polyglot
+A program for Mac, Windows and Linux to manage multiple translation files at once. Easy to use UI, multithreaded for optimization and Google Translate 
+natively integrated.
 
-A new Flutter project.
+![dashboard](images/dashboard.png)
 
-## Getting Started
+## How to install
+TODO
 
-This project is a starting point for a Flutter application.
+## How to use
+In the folder you have your translation files, create a file called `polyglot.json`. In Polyglot, select the Icon at the top right
+and select **Open new** and select your files. To populate the data needed for Polyglot to operate, go to settings. Settings can be opened by clicking `cmd + n` on mac.  If you use a root-key in
+your translation files, add it in the input field called "translation key". Select the tab translation settings, and add your languages. After adding the 
+languages, you will see that the `polyglot.json` file has been populated with data about your translation set up. If you need to 
+change the path to a language file you can do that in this file.
 
-A few resources to get you started if this is your first Flutter project:
+### Add new translation
+Adding a new translation can be done by using the input field above the grid or by clicking `cmd + n` on Mac.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Google Translate API
+In order to use the Google Translate API you need a Google Translate API key. After activating the Google Translate module, you can obtain an API key by going to **APIs & Services** in the 
+Google Cloud Console. Click **Credentials** and **Create Credentials**. Create a key that only has access to the Google Translate APIs.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+#### Master language
+Polyglot uses a master language to translate the other languages. Automatically the first language you choose will be set to master language,
+but this can be changed in the `polyglot.json` file.
+
+#### Single text translation
+By using the Translation button in the grid or when addind a new key, the field will be automatically translated based on the master translation.
+
+#### Batch translation (Beta)
+The batch translation is currently in Beta. Due to limitations on the Google Translate API this feature is a bit unstable,
+but will hopefully be more stable in the future.
