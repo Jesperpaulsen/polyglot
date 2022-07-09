@@ -53,8 +53,11 @@ void correctJsonFormat(CorrectJsonFormatIsolateMessage message) {
   }
 
   final parsedJson = jsonDecode(res);
+  try {
+    final translationMap = Map<String, String?>.from(parsedJson);
 
-  final translationMap = Map<String, String?>.from(parsedJson);
-
-  message.port.send(translationMap);
+    message.port.send(translationMap);
+  } catch (e) {
+    message.port.send(<String, String?>{});
+  }
 }

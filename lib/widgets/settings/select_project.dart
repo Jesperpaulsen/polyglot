@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:polyglot/models/internal_project_config.dart';
 import 'package:polyglot/providers/translation_provider.dart';
 import 'package:polyglot/services/config_handler.dart';
+import 'package:polyglot/widgets/common/button.dart';
+import 'package:polyglot/widgets/common/custom_icon_button.dart';
 
 class SelectProject extends ConsumerWidget {
   const SelectProject({Key? key}) : super(key: key);
@@ -34,30 +36,29 @@ class SelectProject extends ConsumerWidget {
       child: SizedBox(
         width: 800,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
             children: [
-              const Text(
-                'Projects',
-                style: TextStyle(fontSize: 24),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Open new',
-                    style: TextStyle(fontSize: 18),
+                    'Projects',
+                    style: TextStyle(fontSize: 24),
                   ),
-                  IconButton(
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Button(
                     onPressed: () =>
                         openProjectFromFolder(reloadTranslations, context),
-                    icon: const Icon(Icons.folder),
+                    label: 'Open new',
                   )
                 ],
+              ),
+              const SizedBox(
+                height: 20,
               ),
               Container(
                 width: double.infinity,
@@ -95,21 +96,32 @@ class SelectProject extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: Text(project.path),
+                          Expanded(
+                            child: MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Text(
+                                project.path,
+                              ),
+                            ),
                           ),
-                          IconButton(
-                              onPressed: project.id !=
-                                      ConfigHandler.instance.internalConfig
-                                          ?.internalProjectConfig?.id
-                                  ? () => ConfigHandler.instance
-                                      .removeProjectFromInternalConfig(
-                                          project.id)
-                                  : null,
-                              icon: const Icon(
-                                Icons.delete,
-                              ))
+                          CustomIconButton(
+                            onPressed: () => _changePath(
+                                project.id, reloadTranslations, context),
+                            iconData: Icons.launch,
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          CustomIconButton(
+                            onPressed: project.id !=
+                                    ConfigHandler.instance.internalConfig
+                                        ?.internalProjectConfig?.id
+                                ? () => ConfigHandler.instance
+                                    .removeProjectFromInternalConfig(project.id)
+                                : null,
+                            iconData: Icons.delete,
+                            color: Colors.red,
+                          )
                         ],
                       ),
                     ),

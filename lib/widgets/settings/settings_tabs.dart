@@ -28,7 +28,7 @@ class SettingsTabs extends StatelessWidget {
                     border: Border(
                       bottom: BorderSide(
                         color: setting.index == activeIndex
-                            ? Colors.blue
+                            ? Colors.orange
                             : Colors.grey,
                       ),
                     ),

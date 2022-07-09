@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 import 'package:polyglot/providers/translation_provider.dart';
 import 'package:polyglot/services/grid_builder.dart';
-import 'package:pluto_grid/pluto_grid.dart';
 
 class Grid extends ConsumerStatefulWidget {
   final TranslationState translationState;
@@ -67,7 +67,8 @@ class _GridState extends ConsumerState<Grid> {
       },
       columns: columns,
       rows: rows,
-      configuration: PlutoGridConfiguration(
+      configuration: PlutoGridConfiguration.dark(
+        gridBackgroundColor: Colors.black12,
         columnFilterConfig: PlutoGridColumnFilterConfig(
           resolveDefaultColumnFilter: (column, resolver) =>
               resolver<PlutoFilterTypeContains>() as PlutoFilterType,

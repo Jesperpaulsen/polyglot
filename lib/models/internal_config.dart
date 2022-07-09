@@ -19,10 +19,13 @@ class InternalConfig {
       internalProjectConfig = InternalProjectConfig(path: '');
     }
 
+    print(json);
+
     try {
       projects = json['projects'] != null
-          ? json['projects']
+          ? (json['projects'] as List<dynamic>)
               .map((project) => InternalProjectConfig.fromJson(project))
+              .toList()
           : <InternalProjectConfig>[];
     } catch (e) {
       projects = [];

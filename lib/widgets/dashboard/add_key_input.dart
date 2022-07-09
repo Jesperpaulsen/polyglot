@@ -53,9 +53,7 @@ class _AddKeyInputState extends State<AddKeyInput> {
           ),
           Button(
             onPressed: _showNeyKeyDialog,
-            child: const Text(
-              'Add key',
-            ),
+            label: 'Add key',
           ),
         ],
       ),

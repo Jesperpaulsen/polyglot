@@ -45,6 +45,22 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
     intlCodeToName = Map<String, String>.from(jsonDecode(json));
   }
 
+  Future<void> addLanguage() async {
+    if (intlCode == null || fileName == null) {
+      return;
+    }
+    if (!fileName!.endsWith('.json')) {
+      fileName = '$fileName.json';
+    }
+    await ConfigHandler.instance.addLanguageToProject(intlCode!, fileName!);
+
+    await ref.read(TranslationProvider.provider.notifier).reloadTranslations();
+    setState(() {
+      intlCode = '';
+      fileName = '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final translationState = ref.watch(TranslationProvider.provider);
@@ -55,7 +71,15 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
           'Translations',
           style: TextStyle(fontSize: 24),
         ),
-        ...[
+        if (translationState.loading)
+          const Center(
+            child: SizedBox(
+              height: 200,
+              width: 200,
+              child: CircularProgressIndicator(),
+            ),
+          )
+        else ...[
           for (final managerKey in translationState.sortedManagersKeys)
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -77,14 +101,17 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
                   if (translationState.translations[managerKey]!.isMaster)
                     const Text(
                       'Master',
-                      style: TextStyle(color: Colors.teal),
+                      style: TextStyle(color: Colors.orange),
                     )
                   else
                     IconButton(
                       onPressed: () => translationProvider.batchTranslation(
                         targetIntlCode: managerKey,
                       ),
-                      icon: const Icon(Icons.translate),
+                      icon: const Icon(
+                        Icons.translate,
+                        color: Colors.orange,
+                      ),
                     ),
                 ],
               ),
@@ -104,7 +131,7 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
                 fieldViewBuilder: ((context, textEditingController, focusNode,
                         onFieldSubmitted) =>
                     Input(
-                      hint: 'Select language',
+                      label: 'Select language',
                       controller: textEditingController,
                       onSubmitted: (_) => onFieldSubmitted(),
                       focusNode: focusNode,
@@ -178,9 +205,12 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
               width: 250,
               child: Input(
                 label: 'Translation file name',
-                onChange: (value) => setState(() {
-                  fileName = value;
-                }),
+                onChange: (value) => setState(
+                  () {
+                    fileName = value;
+                  },
+                ),
+                onSubmitted: (_) => addLanguage(),
               ),
             ),
             const SizedBox(
@@ -188,21 +218,9 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
             ),
             Button(
               onPressed: intlCode != null && fileName != null
-                  ? () async {
-                      if (!fileName!.endsWith('.json')) {
-                        fileName = '$fileName.json';
-                      }
-                      await ConfigHandler.instance
-                          .addLanguageToProject(intlCode!, fileName!);
-
-                      await translationProvider.reloadTranslations();
-                      setState(() {
-                        intlCode = '';
-                        fileName = '';
-                      });
-                    }
+                  ? () => addLanguage()
                   : null,
-              child: const Text('Add language'),
+              label: 'Add language',
             )
           ],
         )

@@ -144,7 +144,7 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
                             });
                           },
                           iconSize: 18,
-                          color: Colors.blue,
+                          color: Colors.orange,
                           padding: const EdgeInsets.all(0),
                         ),
                     ],
@@ -159,7 +159,7 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
           onPressed: _translationKey.isEmpty
               ? null
               : () => _storeTranslations(context),
-          child: const Text('Save'),
+          label: 'Save',
         )
       ],
     );

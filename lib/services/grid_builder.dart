@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 import 'package:polyglot/models/translation_manager.dart';
 import 'package:polyglot/widgets/dashboard/grid/delete_row_dialog.dart';
-import 'package:pluto_grid/pluto_grid.dart';
 
 class GridBuilderResult {
   List<PlutoRow> rows;
@@ -131,7 +131,7 @@ class GridBuilder {
                             translation);
                       },
                       iconSize: 18,
-                      color: Colors.blue,
+                      color: Colors.orange,
                       padding: const EdgeInsets.all(0),
                     ),
                 ],

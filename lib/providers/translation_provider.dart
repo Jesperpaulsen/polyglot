@@ -206,35 +206,43 @@ class TranslationProvider extends StateNotifier<TranslationState> {
   }
 
   Future<void> batchTranslation({required String targetIntlCode}) async {
-    final newTranslations = await TranslationHandler.instance.translateBatch(
-      masterTranslations:
-          state.translations[state.masterIntlCode]!.translations,
-      existingTranslations: state.translations[targetIntlCode]?.translations,
-      sourceIntlCode: state.masterIntlCode!,
-      targetIntlCode: targetIntlCode,
-    );
+    _setLoading(isLoading: true);
 
-    final translationManager = state.translations[targetIntlCode];
+    try {
+      final newTranslations = await TranslationHandler.instance.translateBatch(
+        masterTranslations:
+            state.translations[state.masterIntlCode]!.translations,
+        existingTranslations: state.translations[targetIntlCode]?.translations,
+        sourceIntlCode: state.masterIntlCode!,
+        targetIntlCode: targetIntlCode,
+      );
 
-    if (translationManager == null) {
-      throw Exception(
-          '[TranslationProvider] No translation manager matching translation code $targetIntlCode');
+      final translationManager = state.translations[targetIntlCode];
+
+      if (translationManager == null) {
+        throw Exception(
+            '[TranslationProvider] No translation manager matching translation code $targetIntlCode');
+      }
+
+      translationManager.translations = newTranslations;
+
+      final translationConfig =
+          ConfigHandler.instance.projectConfig?.languageConfigs[targetIntlCode];
+
+      if (translationConfig == null) {
+        throw Exception(
+            '[TranslationProvider] No translation config matching translation code $targetIntlCode');
+      }
+
+      await TranslationWriterIsolate()
+          .sortAndWriteTranslationFileWithSeparateIsolate(
+              translationConfig, translationManager);
+      reloadTranslations();
+    } catch (e) {
+      print(e);
     }
 
-    translationManager.translations = newTranslations;
-
-    final translationConfig =
-        ConfigHandler.instance.projectConfig?.languageConfigs[targetIntlCode];
-
-    if (translationConfig == null) {
-      throw Exception(
-          '[TranslationProvider] No translation config matching translation code $targetIntlCode');
-    }
-
-    await TranslationWriterIsolate()
-        .sortAndWriteTranslationFileWithSeparateIsolate(
-            translationConfig, translationManager);
-    reloadTranslations();
+    _setLoading(isLoading: false);
   }
 
   static final provider =

@@ -24,8 +24,16 @@ class IntlUI extends StatelessWidget {
     return MaterialApp(
       title: 'Internalization UI',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.light,
+        primarySwatch: Colors.orange,
+        backgroundColor: Colors.white,
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.orange,
+        backgroundColor: Colors.black,
+      ),
+      themeMode: ThemeMode.dark,
       home: const Dashboard(),
     );
   }

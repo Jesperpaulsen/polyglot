@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:polyglot/widgets/common/custom_icon_button.dart';
 
 enum PICKER_TYPE { FILE, DIRECTORY }
 
@@ -32,12 +33,14 @@ class _FilePickerInputState extends State<FilePickerInput> {
       final files = await FilePicker.platform.pickFiles(
           allowedExtensions: widget.allowedExtensions, type: FileType.custom);
       result = files?.paths.first;
-      _controller.text = result ?? '';
     } else {
       result = await FilePicker.platform.getDirectoryPath();
-      _controller.text = result ?? '';
     }
-    widget.onFilePicked(result);
+
+    if (result != null) {
+      _controller.text = result ?? '';
+      widget.onFilePicked(result);
+    }
   }
 
   @override
@@ -74,10 +77,8 @@ class _FilePickerInputState extends State<FilePickerInput> {
             controller: _controller,
           ),
         ),
-        IconButton(
-          icon: Icon(
-            Icons.folder,
-          ),
+        CustomIconButton(
+          iconData: Icons.folder,
           onPressed: _pickFile,
         ),
       ],

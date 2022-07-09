@@ -29,7 +29,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
             children: [
               const Text(
                 'Polyglot',
-                style: TextStyle(fontSize: 34),
+                style: TextStyle(fontSize: 34, color: Colors.orange),
               ),
               const AddKeyInput(),
               Row(

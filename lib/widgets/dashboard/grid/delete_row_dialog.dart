@@ -25,7 +25,7 @@ class DeleteRowDialog extends ConsumerWidget {
         Button(
           onPressed: () => Navigator.pop(context),
           color: Colors.grey,
-          child: const Text('no'),
+          label: 'no',
         ),
         Button(
           onPressed: () {
@@ -33,8 +33,7 @@ class DeleteRowDialog extends ConsumerWidget {
             deleteCallback();
             Navigator.pop(context);
           },
-          color: Colors.red,
-          child: const Text('yes'),
+          label: 'yes',
         ),
       ],
     );
