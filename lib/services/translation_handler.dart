@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
@@ -109,6 +110,7 @@ class TranslationHandler {
         port: port.sendPort,
         apiKey: apiKey,
         masterTranslations: masterTranslations,
+        existingTranslations: existingTranslations,
         sourceIntlCode: sourceIntlCode,
         targetIntlCode: targetIntlCode,
       ),
@@ -139,12 +141,155 @@ class IsolateMessage {
 Future<void> _translateBatchTextOnIsolate(IsolateMessage message) async {
   final client = TranslationClient(apiKey: message.apiKey);
 
-  const separator = '*@_::_;:!';
+  print(message.existingTranslations);
 
+  final result = translateTextAsJson(message);
+
+  message.port.send(result);
+}
+
+/*
+* Trying to solve it with json, but not ideal because translate tend to miss commas
+*
+* */
+
+Future<Map<String, String?>> translateTextAsJson(IsolateMessage message) async {
+  final client = TranslationClient(apiKey: message.apiKey);
+
+  final parts = <Map<String, String>>[];
+  var counter = 0;
+  var currentMap = <String, String>{};
+  final Map<String, String?> resultMap = message.existingTranslations != null
+      ? Map.from(message.existingTranslations!)
+      : <String, String?>{};
+
+  final masterTranslationEntriesAsList =
+      message.masterTranslations.entries.toList();
+
+  for (var i = 0; i < masterTranslationEntriesAsList.length; i++) {
+    final entry = masterTranslationEntriesAsList[i];
+
+    if (resultMap.containsKey(entry.key)) {
+      continue;
+    }
+
+    final stringToAdd = entry.value;
+    if (stringToAdd == null) {
+      continue;
+    }
+
+    if (counter < 200) {
+      currentMap[i.toString()] = stringToAdd;
+      counter += stringToAdd.length;
+    } else {
+      parts.add(currentMap);
+      counter = 0;
+      currentMap = <String, String>{};
+    }
+  }
+
+  final futures = <Future<String?>>[];
+
+  for (final part in parts) {
+    futures.add(client.translateString(
+      stringToTranslate: jsonEncode(part),
+      sourceLanguage: message.sourceIntlCode,
+      targetLanguage: message.targetIntlCode,
+    ));
+  }
+
+  final results = await Future.wait(futures);
+
+  final allParts = <String, String>{};
+
+  for (final result in results) {
+    if (result == null) continue;
+    final fixedJsonString = addMissingCommasToJsonString(result);
+
+    print(fixedJsonString);
+
+    allParts.addAll(Map<String, String>.from(jsonDecode(result)));
+  }
+
+  for (var i = 0; i < masterTranslationEntriesAsList.length; i++) {
+    final key = masterTranslationEntriesAsList[i].key;
+
+    final translatedString = allParts[i];
+
+    if (translatedString != null) {
+      resultMap[key] = allParts[i];
+    }
+  }
+
+  return resultMap;
+}
+
+String addMissingCommasToJsonString(String json) {
+  var res = '';
+
+  var ruleIndex = 0;
+
+  final rules = <bool Function(String, String, String)>[
+    (previous, current, next) =>
+        previous == '{' || previous == ',' || previous == ' ' && current != ':',
+    (previous, current, next) => current == '"' && next != '"' && next != ",",
+    (previous, current, next) => current == '"' && next == ":",
+    (previous, current, next) => current == '"' && next != '"',
+  ];
+
+  bool finalRule(String previous, String current, String next) {
+    if (previous == ":" || previous == ",") {
+      return false;
+    }
+    if (current == '"' && next != ',' && next != '}') {
+      print('final');
+      ruleIndex = 0;
+      return true;
+    } else if (current == '"' && next == ',') {
+      ruleIndex = 0;
+      return false;
+    }
+    return false;
+  }
+
+  for (var i = 1; i < json.length - 1; i++) {
+    final previous = json[i - 1];
+    final current = json[i];
+    final next = json[i + 1];
+
+    if (ruleIndex == rules.length - 1) {
+      final result = finalRule(previous, current, next);
+      if (result) {
+        res += "$current,";
+      } else {
+        res += current;
+      }
+    } else {
+      final result = rules[ruleIndex](previous, current, next);
+      if (result) {
+        ruleIndex++;
+        print(ruleIndex);
+      }
+      res += current;
+    }
+  }
+
+  return res;
+}
+
+/*
+* The idea is to build up longer strings encoded with an encoder, translate it and then decode it.
+* The problem is that Google Translate API tends to break up the encoder in different ways, making it difficult to decode it again.
+* */
+
+Future<Map<String, String?>> translateTextWithEncoder(
+    IsolateMessage message) async {
+  final client = TranslationClient(apiKey: message.apiKey);
+  const encoder = '©™©';
   final parts = <String>[];
   var counter = 0;
   var currentString = '';
-  final resultMap = message.existingTranslations != null
+  final Map<String, String?> resultMap = message.existingTranslations != null
       ? Map.from(message.existingTranslations!)
       : <String, String?>{};
 
@@ -156,9 +301,10 @@ Future<void> _translateBatchTextOnIsolate(IsolateMessage message) async {
       continue;
     }
 
-    if (counter < 20000) {
-      currentString += '${entry.value}$separator';
-      counter += currentString.length;
+    if (counter < 2000) {
+      final stringToAdd = '${entry.value}$encoder';
+      currentString += stringToAdd;
+      counter += stringToAdd.length;
     } else {
       parts.add(currentString);
       counter = 0;
@@ -169,7 +315,6 @@ Future<void> _translateBatchTextOnIsolate(IsolateMessage message) async {
   final futures = <Future<String?>>[];
 
   for (final part in parts) {
-    print(part);
     futures.add(client.translateString(
       stringToTranslate: part,
       sourceLanguage: message.sourceIntlCode,
@@ -181,43 +326,54 @@ Future<void> _translateBatchTextOnIsolate(IsolateMessage message) async {
 
   final allParts = <String>[];
 
+  print(results.length);
+
   for (final result in results) {
     if (result == null) continue;
 
-    final splittedWords = <String>[];
-    var currentWord = '';
-    var isMatchingSeparator = false;
-    var separatorIndex = 0;
-    for (var i = 0; i < result.length; i++) {
-      final currentChar = result[i];
-
-      if (isMatchingSeparator && currentChar == ' ') {
-        continue;
-      }
-
-      if (separatorIndex == separator.length - 1) {
-        splittedWords.add(currentWord);
-        currentWord = '';
-        separatorIndex = 0;
-      } else if (currentChar == separator[separatorIndex]) {
-        isMatchingSeparator = true;
-        separatorIndex++;
-      } else {
-        currentWord += currentChar;
-      }
-    }
-
-    print(currentWord);
-    //allParts.addAll(result.split(separator));
-    allParts.add(currentWord);
+    // final splittedWords = <String>[];
+    // var currentWord = '';
+    // var isMatchingSeparator = false;
+    // var separatorIndex = 0;
+    // for (var i = 0; i < result.length; i++) {
+    //   final currentChar = result[i];
+    //
+    //   if (isMatchingSeparator && currentChar == ' ') {
+    //     continue;
+    //   }
+    //
+    //   if (separatorIndex == separator.length - 1) {
+    //     splittedWords.add(currentWord);
+    //     currentWord = '';
+    //     separatorIndex = 0;
+    //     isMatchingSeparator = false;
+    //   } else if (currentChar == separator[separatorIndex]) {
+    //     isMatchingSeparator = true;
+    //     separatorIndex++;
+    //   } else {
+    //     currentWord += currentChar;
+    //   }
+    // }
+    final re = RegExp(r'©™©|© ™©|©™ ©|© ™ ©|©  ™©|©™  ©{0,}');
+    print(result.split(re));
+    allParts.addAll(result.split(re));
+    // allParts.addAll(splittedWords);
   }
 
   print(allParts.length);
   print(masterTranslationEntriesAsList.length);
+
+  String? nextWordToInsert = allParts.first;
+  int currentStringIndex = 0;
+
   for (var i = 0; i < masterTranslationEntriesAsList.length; i++) {
     final key = masterTranslationEntriesAsList[i].key;
-    resultMap[key] = allParts[i];
+    if (!resultMap.containsKey(key)) {
+      resultMap[key] = nextWordToInsert;
+      currentStringIndex++;
+      nextWordToInsert = allParts[currentStringIndex];
+    }
   }
 
-  message.port.send(resultMap);
+  return resultMap;
 }

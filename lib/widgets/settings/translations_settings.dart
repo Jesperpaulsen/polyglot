@@ -87,6 +87,8 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
                         masterTranslations: translationState
                             .translations[translationState.masterIntlCode]!
                             .translations,
+                        existingTranslations: translationState
+                            .translations[managerKey]?.translations,
                         sourceIntlCode: translationState.masterIntlCode!,
                         targetIntlCode: managerKey,
                       ),
