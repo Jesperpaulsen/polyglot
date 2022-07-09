@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "intl_ui" "\0"
+            VALUE "CompanyName", "no.jesper" "\0"
+            VALUE "FileDescription", "Polyglot" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "intl_ui" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "intl_ui.exe" "\0"
-            VALUE "ProductName", "intl_ui" "\0"
+            VALUE "InternalName", "polyglot" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 no.jesper. All rights reserved." "\0"
+            VALUE "OriginalFilename", "polyglot.exe" "\0"
+            VALUE "ProductName", "polyglot" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
