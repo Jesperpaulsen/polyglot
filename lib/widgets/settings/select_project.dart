@@ -80,7 +80,7 @@ class SelectProject extends ConsumerWidget {
                   <InternalProjectConfig>[])
                 GestureDetector(
                   onTap: () =>
-                      _changePath(project.id, reloadTranslations, context),
+                      _changePath(project.path, reloadTranslations, context),
                   child: DecoratedBox(
                     decoration: const BoxDecoration(
                       border: Border(
@@ -105,6 +105,7 @@ class SelectProject extends ConsumerWidget {
                             ),
                           ),
                           CustomIconButton(
+                            tooltipMessage: 'Open project',
                             onPressed: () => _changePath(
                               project.path,
                               reloadTranslations,
@@ -116,6 +117,7 @@ class SelectProject extends ConsumerWidget {
                             width: 20,
                           ),
                           CustomIconButton(
+                            tooltipMessage: 'Delete project',
                             onPressed: project.id !=
                                     ConfigHandler.instance.internalConfig
                                         ?.internalProjectConfig?.id

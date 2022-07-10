@@ -127,7 +127,7 @@ jobs:
           ASC_PROVIDER: ${{ secrets.IDENTITY_ID }}
         run: xcrun altool -t osx -f build/macos/Build/Products/Release/Polyglot.dmg --primary-bundle-id no.jesper.polyglot --notarize-app -u $NOTARIZATION_USERNAME -p $NOTARIZATION_PASSWORD --asc-provider $ASC_PROVIDER
       - name: Staple
-        run: xcrun stapler staple -v build/macos/Build/Products/Release/Polyglot.dmg
+        run: sh ./.github/scripts/staple_script.sh
       - name: Mac Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')

@@ -78,6 +78,7 @@ class _FilePickerInputState extends State<FilePickerInput> {
           ),
         ),
         CustomIconButton(
+          tooltipMessage: 'Choose folder',
           iconData: Icons.folder,
           onPressed: _pickFile,
         ),
