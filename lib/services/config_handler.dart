@@ -26,8 +26,9 @@ class ConfigHandler {
 
   Future<void> _initialize() async {
     _internalConfig = await _initializeInternalConfig();
+    print(_internalConfig!.internalProjectConfig!.path);
     _projectConfig = await _initializeProjectConfig(_internalConfig!);
-    _isInitialized.complete();
+    if (!_isInitialized.isCompleted) _isInitialized.complete();
   }
 
   Future<InternalConfig> _initializeInternalConfig() async {
@@ -38,15 +39,21 @@ class ConfigHandler {
     }
 
     internalConfig.internalProjectConfig ??= InternalProjectConfig(path: '');
-    _makeSureInternalConfigHasOwnProject(internalConfig);
+    _makeSureInternalConfigHasLatestVersionOfOwnProject(internalConfig);
     translationDirectory = _getProjectConfigDirectory(internalConfig);
     return internalConfig;
   }
 
-  void _makeSureInternalConfigHasOwnProject(InternalConfig internalConfig) {
-    if (!internalConfig.projects.any(
-        (project) => project.id == internalConfig.internalProjectConfig!.id)) {
+  void _makeSureInternalConfigHasLatestVersionOfOwnProject(
+      InternalConfig internalConfig) {
+    final indexOfInternalConfig = internalConfig.projects.indexWhere(
+        (project) => project.id == internalConfig.internalProjectConfig!.id);
+
+    if (indexOfInternalConfig == -1) {
       internalConfig.projects.add(internalConfig.internalProjectConfig!);
+    } else {
+      internalConfig.projects[indexOfInternalConfig] =
+          internalConfig.internalProjectConfig!;
     }
   }
 
@@ -116,12 +123,14 @@ class ConfigHandler {
 
   Future<void> saveInternalConfig() async {
     if (internalConfig?.internalProjectConfig == null) {
-      return;
+      throw Exception(
+          'InternalProjectConfig was null when saving internalConfig');
     }
 
-    _makeSureInternalConfigHasOwnProject(internalConfig!);
+    _makeSureInternalConfigHasLatestVersionOfOwnProject(internalConfig!);
 
-    return _storeInternalConfig(internalConfig!);
+    await _storeInternalConfig(internalConfig!);
+    await _initialize();
   }
 
   Future<void> removeProjectFromInternalConfig(String projectId) async {

@@ -106,7 +106,10 @@ class SelectProject extends ConsumerWidget {
                           ),
                           CustomIconButton(
                             onPressed: () => _changePath(
-                                project.id, reloadTranslations, context),
+                              project.path,
+                              reloadTranslations,
+                              context,
+                            ),
                             iconData: Icons.launch,
                           ),
                           SizedBox(

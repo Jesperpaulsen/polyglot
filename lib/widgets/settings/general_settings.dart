@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:polyglot/providers/translation_provider.dart';
 import 'package:polyglot/services/config_handler.dart';
 import 'package:polyglot/widgets/common/button.dart';
 import 'package:polyglot/widgets/common/file_picker_input.dart';
@@ -21,6 +22,8 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
 
   @override
   Widget build(BuildContext context) {
+    final translationProvider = ref.read(TranslationProvider.provider.notifier);
+
     return Center(
       child: Column(
         children: [
@@ -81,14 +84,15 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
           ),
           Button(
             label: 'Save',
-            onPressed: () {
+            onPressed: () async {
               ConfigHandler
                   .instance.internalConfig?.internalProjectConfig?.path = path!;
               ConfigHandler.instance.projectConfig?.translationKeyInFiles =
                   translationKeyInFiles;
               ConfigHandler.instance.internalConfig?.internalProjectConfig
                   ?.translateApiKey = translationApiKey;
-              ConfigHandler.instance.saveInternalConfig();
+              await ConfigHandler.instance.saveInternalConfig();
+              await translationProvider.reloadTranslations();
             },
           )
         ],
