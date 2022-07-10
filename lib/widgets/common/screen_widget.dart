@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:polyglot/screens/settings.dart';
+import 'package:polyglot/utils/get_meta_key.dart';
 import 'package:polyglot/widgets/common/simple_shortcut.dart';
 import 'package:polyglot/widgets/dashboard/new_key_dialog.dart';
 
@@ -53,11 +54,11 @@ class _ScreenWidgetState extends State<ScreenWidget> {
   Widget build(BuildContext context) {
     return SimpleShortcut(
       bindings: {
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyN): () =>
+        LogicalKeySet(getMetaKey(), LogicalKeyboardKey.keyN): () =>
             _showAddNewDialog(context),
         LogicalKeySet(LogicalKeyboardKey.escape): () =>
             FocusScope.of(context).unfocus(),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.comma): () =>
+        LogicalKeySet(getMetaKey(), LogicalKeyboardKey.comma): () =>
             _showSettingsDialog(context),
       },
       child: Scaffold(
