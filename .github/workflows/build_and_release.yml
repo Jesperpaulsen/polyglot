@@ -7,7 +7,6 @@ on:
 jobs:
   build-and-release-linux:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Setup Flutter
@@ -67,6 +66,9 @@ jobs:
 
   build-and-release-macos:
     runs-on: macos-latest
+    env:
+      MACOS_APP_RELEASE_PATH: build/macos/Build/Products/Release
+      APP_NAME: polyglot
 
     steps:
       - uses: actions/checkout@v2
@@ -80,16 +82,51 @@ jobs:
         run: flutter config --enable-macos-desktop
       - name: Build artifacts
         run: flutter build macos --release
-      - name: Archive Release
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: Polyglot-${{github.ref_name}}-macos.zip
-          directory: build/macos/Build/Products/Release
-      - name: macOS Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Codesign executable
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        run: |
+          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+          echo "Create Keychain"
+          security create-keychain -p $MACOS_CERTIFICATE_PWD build.keychain
+          echo "Assign to Login Keychain"
+          security default-keychain -s build.keychain
+          echo "Unlock the Login Keychain"
+          security unlock-keychain -p $MACOS_CERTIFICATE_PWD build.keychain
+          echo "Import certificate"
+          security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          echo "Set Key Partition"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $MACOS_CERTIFICATE_PWD build.keychain
+          echo "Find Identity"
+          security find-identity
+          echo "Sign the app"
+          /usr/bin/codesign --force --deep -s 8H8JD9U55L ./$MACOS_APP_RELEASE_PATH/$APP_NAME.app
+      - name: Create a dmg
+        run: |
+          echo "Install create-dmg"
+          brew install create-dmg
+          cd $MACOS_APP_RELEASE_PATH
+          create-dmg \
+            --volname "$APP_NAME" \
+            --window-pos 200 120 \
+            --window-size 800 529 \
+            --icon-size 130 \
+            --text-size 14 \
+            --icon "$APP_NAME.app" 260 250 \
+            --hide-extension "$APP_NAME.app" \
+            --app-drop-link 540 250 \
+            --hdiutil-quiet \
+            "$APP_NAME.dmg" \
+            "$APP_NAME.app"
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: build/macos/Build/Products/Release/Polyglot-${{github.ref_name}}-macos.zip
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/macos/Build/Products/Release/Polyglot.dmg
+          asset_name: Polyglot.dmg
+          asset_content_type: application/octet-stream
