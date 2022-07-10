@@ -122,7 +122,7 @@ jobs:
       - name: "Notarize Release Build"
         uses: devbotsxyz/xcode-notarize@v1
         with:
-          product-path: build/macos/Build/Products/Release/Polyglot.dmg
+          product-path: ./$MACOS_APP_RELEASE_PATH/$APP_NAME.app
           appstore-connect-username: ${{ secrets.NOTARIZATION_USERNAME }}
           appstore-connect-password: ${{ secrets.NOTARIZATION_PASSWORD }}
       - name: Mac Release
