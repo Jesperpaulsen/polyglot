@@ -102,7 +102,7 @@ jobs:
           echo "Find Identity"
           security find-identity
           echo "Sign the app"
-          /usr/bin/codesign --force --deep -s $IDENTITY_ID ./$MACOS_APP_RELEASE_PATH/$APP_NAME.app
+          /usr/bin/codesign --force --options runtime --deep -s $IDENTITY_ID ./$MACOS_APP_RELEASE_PATH/$APP_NAME.app
       - name: Create a dmg
         run: |
           echo "Install create-dmg"
