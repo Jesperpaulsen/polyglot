@@ -23,8 +23,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  flutter_launcher_icons_maker: ^0.10.2
 
 flutter:
   uses-material-design: true
   assets:
     - internalization_languages.json
+    - logo.png
+
+flutter_icons:
+  macos: true
+  windows: true
+  image_path: "assets/logo.png"

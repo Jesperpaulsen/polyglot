@@ -27,9 +27,13 @@ class _DashboardState extends ConsumerState<Dashboard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Polyglot',
-                style: TextStyle(fontSize: 34, color: Colors.orange),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: Image.asset('logo.png'),
+                ),
               ),
               const AddKeyInput(),
               Row(
