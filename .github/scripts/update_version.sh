@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-git config --global user.email "utvikler@progit.no"
-git config --global user.name "Progit Utvikler"
+git config --global user.email "jesper@jesper.no"
+git config --global user.name "Jesper Paulsen"
 
 # Find and increment the version number.
 perl -i -pe 's/^(version:\s+\d+\.\d+\.\d+\+)(\d+)$/$1.($2+1)/e' pubspec.yaml
