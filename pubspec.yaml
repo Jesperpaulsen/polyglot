@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+22
+version: 1.0.1+23
 
 environment:
   sdk: ">=2.17.1 <3.0.0"
@@ -23,8 +23,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  flutter_launcher_icons_maker: ^0.10.2
 
 flutter:
   uses-material-design: true
   assets:
     - internalization_languages.json
+    - logo.png
+
+flutter_icons:
+  macos: true
+  windows: true
+  image_path: "assets/logo.png"
