@@ -8,7 +8,7 @@ import 'package:polyglot/services/language_code_to_readable_name.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DesktopWindow.setWindowSize(const Size(1280, 1000));
-  await DesktopWindow.setMinWindowSize(const Size(400, 400));
+  await DesktopWindow.setMinWindowSize(const Size(600, 400));
 
   await LanguageCodeToReadableName.instance.ensureInitialised();
   await ConfigHandler.instance.ensureInitialised();
