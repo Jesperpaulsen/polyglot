@@ -80,7 +80,7 @@ class SelectProject extends ConsumerWidget {
                   <InternalProjectConfig>[])
                 GestureDetector(
                   onTap: () =>
-                      _changePath(project.id, reloadTranslations, context),
+                      _changePath(project.path, reloadTranslations, context),
                   child: DecoratedBox(
                     decoration: const BoxDecoration(
                       border: Border(
