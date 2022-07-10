@@ -86,6 +86,7 @@ jobs:
         env:
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
           MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          IDENTITY_ID: ${{ secrets.IDENTITY_ID }}
         run: |
           echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
           echo "Create Keychain"
@@ -101,7 +102,13 @@ jobs:
           echo "Find Identity"
           security find-identity
           echo "Sign the app"
-          /usr/bin/codesign --force --deep -s 8H8JD9U55L ./$MACOS_APP_RELEASE_PATH/$APP_NAME.app
+          /usr/bin/codesign --force --deep -s $IDENTITY_ID ./$MACOS_APP_RELEASE_PATH/$APP_NAME.app
+      - name: "Notarize Release Build"
+        uses: devbotsxyz/xcode-notarize@v1
+        with:
+          product-path: build/macos/Build/Products/Release/Polyglot.app
+          appstore-connect-username: ${{ secrets.NOTARIZATION_USERNAME }}
+          appstore-connect-password: ${{ secrets.NOTARIZATION_PASSWORD }}
       - name: Create a dmg
         run: |
           echo "Install create-dmg"
@@ -119,12 +126,6 @@ jobs:
             --hdiutil-quiet \
             "$APP_NAME.dmg" \
             "$APP_NAME.app"
-      - name: "Notarize Release Build"
-        uses: devbotsxyz/xcode-notarize@v1
-        with:
-          product-path: ./$MACOS_APP_RELEASE_PATH/$APP_NAME.app
-          appstore-connect-username: ${{ secrets.NOTARIZATION_USERNAME }}
-          appstore-connect-password: ${{ secrets.NOTARIZATION_PASSWORD }}
       - name: Mac Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
