@@ -68,7 +68,7 @@ jobs:
     runs-on: macos-latest
     env:
       MACOS_APP_RELEASE_PATH: build/macos/Build/Products/Release
-      APP_NAME: polyglot
+      APP_NAME: Polyglot
 
     steps:
       - uses: actions/checkout@v2
