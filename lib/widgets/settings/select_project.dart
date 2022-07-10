@@ -105,6 +105,7 @@ class SelectProject extends ConsumerWidget {
                             ),
                           ),
                           CustomIconButton(
+                            tooltipMessage: 'Open project',
                             onPressed: () => _changePath(
                               project.path,
                               reloadTranslations,
@@ -116,6 +117,7 @@ class SelectProject extends ConsumerWidget {
                             width: 20,
                           ),
                           CustomIconButton(
+                            tooltipMessage: 'Delete project',
                             onPressed: project.id !=
                                     ConfigHandler.instance.internalConfig
                                         ?.internalProjectConfig?.id

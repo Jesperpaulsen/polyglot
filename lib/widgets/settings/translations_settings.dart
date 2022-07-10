@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:polyglot/providers/translation_provider.dart';
 import 'package:polyglot/services/config_handler.dart';
 import 'package:polyglot/widgets/common/button.dart';
+import 'package:polyglot/widgets/common/custom_icon_button.dart';
 import 'package:polyglot/widgets/common/input.dart';
 
 class AutocompleteOption {
@@ -104,14 +105,13 @@ class _TranslationsSettingsState extends ConsumerState<TranslationsSettings> {
                       style: TextStyle(color: Colors.orange),
                     )
                   else
-                    IconButton(
+                    CustomIconButton(
+                      tooltipMessage:
+                          'Translate missing keys for ${translationState.translations[managerKey]!.intlLanguageName}',
                       onPressed: () => translationProvider.batchTranslation(
                         targetIntlCode: managerKey,
                       ),
-                      icon: const Icon(
-                        Icons.translate,
-                        color: Colors.orange,
-                      ),
+                      iconData: Icons.translate,
                     ),
                 ],
               ),
