@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,8 +9,10 @@ import 'package:polyglot/services/language_code_to_readable_name.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DesktopWindow.setWindowSize(const Size(1280, 1000));
-  await DesktopWindow.setMinWindowSize(const Size(600, 400));
+  if (!Platform.isWindows) {
+    await DesktopWindow.setWindowSize(const Size(1280, 1000));
+    await DesktopWindow.setMinWindowSize(const Size(600, 400));
+  }
 
   await LanguageCodeToReadableName.instance.ensureInitialised();
   await ConfigHandler.instance.ensureInitialised();

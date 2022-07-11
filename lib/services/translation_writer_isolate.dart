@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
+import 'package:path/path.dart' as p;
 
 import 'package:polyglot/models/language_config.dart';
 import 'package:polyglot/models/translation_manager.dart';
@@ -91,11 +92,9 @@ class TranslationWriterIsolate {
     LanguageConfig config,
     TranslationManager manager,
   ) async {
-    final path = File.fromUri(
-      Uri(
-          path:
-              '${ConfigHandler.instance.translationDirectory}/${config.pathToi18nFile}'),
-    ).path;
+
+    final path = p.absolute('${ConfigHandler.instance.translationDirectory}/${config.pathToi18nFile}');
+
 
     final port = ReceivePort();
     final translationKeyInFiles =
