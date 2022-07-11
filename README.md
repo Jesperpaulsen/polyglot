@@ -18,6 +18,9 @@ your translation files, add it in the input field called "translation key". Sele
 languages, you will see that the `polyglot.json` file has been populated with data about your translation setup. If you need to
 change the path to a language file, you can do that in this file.
 
+### Examples
+Examples with and without root a root translation key can be found [here](examples) 
+
 ### Add new translation
 Adding a new translation can be done by using the input field above the grid or by clicking `cmd/ctrl + n`.
 
@@ -26,7 +29,7 @@ In order to use the Google Translate API, you need a Google Translate API key. A
 Google Cloud Console. Click **Credentials** and **Create Credentials**. Create a key that only has access to the Google Translate APIs. Be aware that batch translating large documents can be costly.
 
 #### Master language
-Polyglot uses a master language to translate the other languages. The first language you choose will automatically be set to master language,
+Polyglot uses a master language to translate the other languages. The first language you choose will automatically be used as the master language,
 but this can be changed in the `polyglot.json` file.
 
 #### Single text translation

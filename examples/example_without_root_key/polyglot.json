@@ -1,0 +1,20 @@
+{
+  "languageConfigs": {
+    "en": {
+      "pathToi18nFile": "en.json",
+      "languageCode": "en",
+      "isMaster": true
+    },
+    "nb": {
+      "pathToi18nFile": "no.json",
+      "languageCode": "nb",
+      "isMaster": false
+    },
+    "de": {
+      "pathToi18nFile": "german.json",
+      "languageCode": "de",
+      "isMaster": false
+    }
+  },
+  "translationKeyInFiles": null
+}
