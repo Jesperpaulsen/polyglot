@@ -3,12 +3,10 @@ import 'package:polyglot/models/language_config.dart';
 class ProjectConfig {
   late Map<String, LanguageConfig> languageConfigs;
   late String? translationKeyInFiles;
-  late String? translateAPIKey;
 
   ProjectConfig({
     this.languageConfigs = const <String, LanguageConfig>{},
     this.translationKeyInFiles,
-    this.translateAPIKey = '',
   });
 
   ProjectConfig.fromJson(Map<String, dynamic> json) {
@@ -19,7 +17,6 @@ class ProjectConfig {
     }
     languageConfigs = res;
     translationKeyInFiles = json['translationKeyInFiles'];
-    translateAPIKey = json['translateAPIKey'];
   }
 
   Map<String, dynamic> toJson() {
@@ -33,7 +30,6 @@ class ProjectConfig {
     return {
       'languageConfigs': convertedLanguageConfigs,
       'translationKeyInFiles': translationKeyInFiles,
-      'translateAPIKey': translateAPIKey,
     };
   }
 }
