@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:io';
-
+import 'package:path/path.dart' as p;
 import 'package:polyglot/models/internal_config.dart';
 import 'package:polyglot/models/internal_project_config.dart';
 import 'package:polyglot/models/language_config.dart';
@@ -63,10 +62,7 @@ class ConfigHandler {
   }
 
   String _getProjectConfigDirectory(InternalConfig internalConfig) {
-    return Directory.fromUri(
-            Uri(path: internalConfig.internalProjectConfig?.path))
-        .parent
-        .path;
+    return p.dirname(internalConfig.internalProjectConfig?.path ?? '');
   }
 
   Future<ProjectConfig> _initializeProjectConfig(

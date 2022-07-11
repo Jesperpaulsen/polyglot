@@ -18,6 +18,7 @@ dependencies:
   file_picker: ^4.6.1
   pluto_grid: ^4.0.0
   dio: ^4.0.6
+  path: ^1.8.1
 
 dev_dependencies:
   flutter_test:
