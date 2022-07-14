@@ -8,7 +8,7 @@ natively integrated.
 ![dashboard](images/dashboard.png)
 
 ## How to install
-At the moment the program has only be tested on Mac, but Linux and Windows will be tested and supported soon. The latest release
+At the moment the program has only be tested on Mac and Windows, but Linux will be tested and supported soon. The latest release
 can be downloaded from [here](https://github.com/Jesperpaulsen/polyglot/releases).
 
 ## How to use
