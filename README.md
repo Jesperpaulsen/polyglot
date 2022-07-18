@@ -3,17 +3,17 @@
 
 # Polyglot
 A program for Mac, Windows and Linux to manage multiple translation files at once. Easy to use UI, multithreaded for optimization and Google Translate 
-natively integrated.
+natively integrated. NB: At the moment it doesn't support nested translation keys.
 
 ![dashboard](images/dashboard.png)
 
 ## How to install
-At the moment the program has only be tested on Mac, but Linux and Windows will be tested and supported soon. The latest release
+At the moment the program has only be tested on Mac and Windows, but Linux will be tested soon. The latest release
 can be downloaded from [here](https://github.com/Jesperpaulsen/polyglot/releases).
 
 ## How to use
 In the folder you have your translation files, create a file called `polyglot.json`. In Polyglot, select the Icon at the top right
-and select **Open new**, and select your files. To populate the data needed for Polyglot to operate, go to settings. Settings can be opened by clicking `cmd/ctrl + ,`. If you use a root key in
+and select **Open new**, and select the file you just created. To populate the data needed for Polyglot to operate, go to settings. Settings can be opened by clicking `cmd/ctrl + ,`. If you use a root key in
 your translation files, add it in the input field called "translation key". Select the tab **translation settings**, and add your languages. After adding the
 languages, you will see that the `polyglot.json` file has been populated with data about your translation setup. If you need to
 change the path to a language file, you can do that in this file.
