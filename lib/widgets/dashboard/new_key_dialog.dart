@@ -72,6 +72,8 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
   @override
   Widget build(BuildContext context) {
     final translations = ref.read(TranslationProvider.provider).translations;
+    final masterIntlCode =
+        ref.read(TranslationProvider.provider).masterIntlCode;
     final sortedManagersKeys =
         ref.read(TranslationProvider.provider).sortedManagersKeys;
     return AlertDialog(
@@ -131,11 +133,9 @@ class _NewKeyDialogState extends ConsumerState<NewKeyDialog> {
                           onPressed: () async {
                             final result = await TranslationHandler.instance
                                 .translateString(
-                              stringToTranslate: _translations[
-                                      translations.values.first.intlCode] ??
-                                  '',
-                              sourceIntlCode:
-                                  translations.values.first.intlCode,
+                              stringToTranslate:
+                                  _translations[masterIntlCode] ?? '',
+                              sourceIntlCode: masterIntlCode ?? '',
                               targetIntlCode: managerKey,
                             );
 
