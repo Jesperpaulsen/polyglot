@@ -40,9 +40,7 @@ class _AddKeyInputState extends State<AddKeyInput> {
             child: Input(
               value: translationKey,
               onChange: (value) {
-                setState(() {
-                  translationKey = value ?? '';
-                });
+                translationKey = value ?? '';
               },
               label: 'Add new translation key',
               onSubmitted: (_) => _showNeyKeyDialog(),
