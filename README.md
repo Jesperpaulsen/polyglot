@@ -3,12 +3,12 @@
 
 # Polyglot
 A program for Mac, Windows and Linux to manage multiple translation files at once. Easy to use UI, multithreaded for optimization and Google Translate 
-natively integrated.
+natively integrated. NB: At the moment it doesn't support nested translation keys.
 
 ![dashboard](images/dashboard.png)
 
 ## How to install
-At the moment the program has only be tested on Mac and Windows, but Linux will be tested and supported soon. The latest release
+At the moment the program has only be tested on Mac and Windows, but Linux will be tested soon. The latest release
 can be downloaded from [here](https://github.com/Jesperpaulsen/polyglot/releases).
 
 ## How to use
