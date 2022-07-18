@@ -13,7 +13,7 @@ can be downloaded from [here](https://github.com/Jesperpaulsen/polyglot/releases
 
 ## How to use
 In the folder you have your translation files, create a file called `polyglot.json`. In Polyglot, select the Icon at the top right
-and select **Open new**, and select your files. To populate the data needed for Polyglot to operate, go to settings. Settings can be opened by clicking `cmd/ctrl + ,`. If you use a root key in
+and select **Open new**, and select the file you just created. To populate the data needed for Polyglot to operate, go to settings. Settings can be opened by clicking `cmd/ctrl + ,`. If you use a root key in
 your translation files, add it in the input field called "translation key". Select the tab **translation settings**, and add your languages. After adding the
 languages, you will see that the `polyglot.json` file has been populated with data about your translation setup. If you need to
 change the path to a language file, you can do that in this file.
