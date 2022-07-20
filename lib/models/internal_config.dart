@@ -6,9 +6,10 @@ class InternalConfig {
 
   InternalConfig({
     InternalProjectConfig? internalProjectConfig,
-    this.projects = const <InternalProjectConfig>[],
-  }) : internalProjectConfig =
-            internalProjectConfig ?? InternalProjectConfig(path: '');
+    List<InternalProjectConfig>? projects,
+  })  : internalProjectConfig =
+            internalProjectConfig ?? InternalProjectConfig(path: ''),
+        projects = projects ?? <InternalProjectConfig>[];
 
   InternalConfig.fromJson(Map<String, dynamic> json) {
     try {
@@ -28,7 +29,7 @@ class InternalConfig {
               .toList()
           : <InternalProjectConfig>[];
     } catch (e) {
-      projects = [];
+      projects = <InternalProjectConfig>[];
     }
   }
 
