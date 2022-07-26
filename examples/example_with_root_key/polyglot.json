@@ -21,5 +21,6 @@
       "isMaster": false
     }
   },
-  "translationKeyInFiles": "translation"
+  "translationKeyInFiles": "translation",
+  "casingType": "SNAKE_CASE"
 }

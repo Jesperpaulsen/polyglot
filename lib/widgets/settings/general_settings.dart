@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:polyglot/models/casing.dart';
 import 'package:polyglot/providers/translation_provider.dart';
 import 'package:polyglot/services/config_handler.dart';
 import 'package:polyglot/services/translation_handler/translation_handler.dart';
 import 'package:polyglot/widgets/common/button.dart';
+import 'package:polyglot/widgets/common/dropdown.dart';
 import 'package:polyglot/widgets/common/file_picker_input.dart';
 import 'package:polyglot/widgets/common/input.dart';
 
@@ -20,6 +22,7 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
       ConfigHandler.instance.projectConfig?.translationKeyInFiles;
   var translationApiKey = ConfigHandler
       .instance.internalConfig?.internalProjectConfig?.translateApiKey;
+  var casing = ConfigHandler.instance.projectConfig?.casing;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +87,48 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
           const SizedBox(
             height: 20,
           ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+                color: Colors.white10,
+                border: Border.all(color: Colors.grey, width: 0.5),
+                borderRadius: BorderRadius.circular(5)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Casing used in files:',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  SizedBox(
+                    width: 385,
+                    child: DropDownMenu<Casing>(
+                        hintText: 'Casing type',
+                        selectedValue: casing,
+                        onItemClicked: (newCasing) {
+                          if (newCasing != null) {
+                            setState(() {
+                              casing = newCasing;
+                            });
+                          }
+                        },
+                        items: casingsMap.values
+                            .map(
+                              (casing) => DropdownMenuItem(
+                                value: casing,
+                                child: Text(casing.title),
+                              ),
+                            )
+                            .toList()),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
           Button(
             label: 'Save',
             onPressed: () async {
@@ -93,7 +138,9 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
                   translationKeyInFiles;
               ConfigHandler.instance.internalConfig?.internalProjectConfig
                   ?.translateApiKey = translationApiKey;
+
               await ConfigHandler.instance.saveInternalConfig();
+              await ConfigHandler.instance.updateProjectCasing(casing);
               await translationProvider.reloadTranslations();
               TranslationHandler.instance.initialize();
             },

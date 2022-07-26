@@ -1,28 +1,46 @@
+import 'package:recase/recase.dart';
+
 enum CASING_TYPES {
-  UPPER_SNAKE,
   SNAKE_CASE,
-  LOWER_CASE,
-  UPPER_CASE,
+  PARAM_CASE,
   PASCAL_CASE,
+  HEADER_CASE,
   CAMEL_CASE,
-  TITLE_CASE,
-  MIXED_CASE,
-  UNKNOWN
+  CONSTANT_CASE,
 }
 
 class Casing {
   CASING_TYPES type;
-  RegExp exp;
+  String title;
+  String Function(String input) converter;
 
-  Casing({required this.type, required String pattern}) :
-      exp = RegExp(pattern);
-
-  bool validatorFn(String testString) {
-    return exp.(testString)
-  }
+  Casing({required this.type, required this.converter})
+      : title = converter(type.name);
 }
 
 Map<CASING_TYPES, Casing> casingsMap = {
-  CASING_TYPES.UPPER_SNAKE: Casing(type: CASING_TYPES.UPPER_SNAKE, pattern: '([A-Z][A-Z0-9_]+)+'),
-  CASING_TYPES.SNAKE_CASE: Casing(type: )
-}
+  CASING_TYPES.SNAKE_CASE: Casing(
+    type: CASING_TYPES.SNAKE_CASE,
+    converter: (input) => input.sentenceCase,
+  ),
+  CASING_TYPES.PARAM_CASE: Casing(
+    type: CASING_TYPES.PARAM_CASE,
+    converter: (input) => input.sentenceCase,
+  ),
+  CASING_TYPES.PASCAL_CASE: Casing(
+    type: CASING_TYPES.PASCAL_CASE,
+    converter: (input) => input.sentenceCase,
+  ),
+  CASING_TYPES.HEADER_CASE: Casing(
+    type: CASING_TYPES.HEADER_CASE,
+    converter: (input) => input.sentenceCase,
+  ),
+  CASING_TYPES.CAMEL_CASE: Casing(
+    type: CASING_TYPES.CAMEL_CASE,
+    converter: (input) => input.sentenceCase,
+  ),
+  CASING_TYPES.CONSTANT_CASE: Casing(
+    type: CASING_TYPES.CONSTANT_CASE,
+    converter: (input) => input.sentenceCase,
+  ),
+};

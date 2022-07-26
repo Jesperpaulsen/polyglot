@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:path/path.dart' as p;
+import 'package:polyglot/models/casing.dart';
 import 'package:polyglot/models/internal_config.dart';
 import 'package:polyglot/models/internal_project_config.dart';
 import 'package:polyglot/models/language_config.dart';
@@ -174,6 +175,19 @@ class ConfigHandler {
     return _storeProjectConfig(projectConfig!);
   }
 
+  Future<void> updateProjectCasing(Casing? newCasing) async {
+    if (projectConfig == null) {
+      throw Exception('Project config is null');
+    }
+
+    if (newCasing == null) {
+      return;
+    }
+
+    projectConfig!.casing = newCasing;
+    saveProjectConfig();
+  }
+
   Future<void> _storeInternalConfig(InternalConfig config) async {
     await FileHandler.instance.writeJsonFile(
         fileName: 'config.json', content: config.toJson(), overwrite: true);
@@ -195,9 +209,10 @@ class ConfigHandler {
     }
     try {
       await FileHandler.instance.writeJsonFile(
-          fullPath: internalConfig!.internalProjectConfig?.path,
-          content: config.toJson(),
-          overwrite: true);
+        fullPath: internalConfig!.internalProjectConfig?.path,
+        content: config.toJson(),
+        overwrite: true,
+      );
     } catch (e) {
       print(e);
     }

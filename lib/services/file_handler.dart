@@ -67,6 +67,7 @@ class FileHandler {
     if (await file.exists() && overwrite == false) {
       return null;
     }
+    print(content);
     return file.writeAsString(getPrettyJSONString(content));
   }
 

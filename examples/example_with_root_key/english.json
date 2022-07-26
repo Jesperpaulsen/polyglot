@@ -1,8 +1,8 @@
 {
   "translation": {
-    "a": "a",
-    "a_category_must_be_followed_by_id_or_a_spacer": "A category can only be followed by an ID or a spacer",
-    "a_field": "a field",
+    "a": "A",
+    "a_category_must_be_followed_by_id_or_a_spacer": "A Category Must Be Followed By Id Or A Spacer",
+    "a_field": "A Field",
     "a_meta_data_field_can_not_contain_[]_or_:": "a meta data field can not contain [,] or :",
     "a_new_version_is_available": "A new version is available",
     "a_unique_field_can_only_be_used_once": "a unique field can only be used once",
