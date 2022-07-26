@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:polyglot/utils/prettyJsonString.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:polyglot/utils/prettyJsonString.dart';
 
 class FileHandler {
   FileHandler._privateConstructor();
@@ -21,7 +22,7 @@ class FileHandler {
   }) async {
     var internalPath = directory;
     internalPath ??= await _localPath;
-    final fullPath = '$internalPath/$fileName';
+    final fullPath = p.absolute('$internalPath/$fileName');
     return File(fullPath);
   }
 
@@ -51,7 +52,25 @@ class FileHandler {
     return jsonDecode(json);
   }
 
-  Future<File> writeJsonFile({
+  Future<File?> writeJsonFile({
+    String? directory,
+    String? fileName,
+    String? fullPath,
+    bool? overwrite = false,
+    required Map<String, dynamic> content,
+  }) async {
+    final file = await _getFile(
+      directory: directory,
+      fileName: fileName,
+      fullPath: fullPath,
+    );
+    if (await file.exists() && overwrite == false) {
+      return null;
+    }
+    return file.writeAsString(getPrettyJSONString(content));
+  }
+
+  Future<bool> checkIfJsonExists({
     String? directory,
     String? fileName,
     String? fullPath,
@@ -62,6 +81,6 @@ class FileHandler {
       fileName: fileName,
       fullPath: fullPath,
     );
-    return file.writeAsString(getPrettyJSONString(content));
+    return file.exists();
   }
 }

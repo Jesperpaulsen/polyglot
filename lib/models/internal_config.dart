@@ -20,8 +20,6 @@ class InternalConfig {
       internalProjectConfig = InternalProjectConfig(path: '');
     }
 
-    print(json);
-
     try {
       projects = json['projects'] != null
           ? (json['projects'] as List<dynamic>)
