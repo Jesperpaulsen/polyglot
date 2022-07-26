@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:polyglot/providers/translation_provider.dart';
 import 'package:polyglot/services/config_handler.dart';
+import 'package:polyglot/services/translation_handler/translation_handler.dart';
 import 'package:polyglot/widgets/common/button.dart';
 import 'package:polyglot/widgets/common/file_picker_input.dart';
 import 'package:polyglot/widgets/common/input.dart';
@@ -53,7 +54,8 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
           SizedBox(
             width: 400,
             child: Input(
-              label: 'Key used in translation files',
+              label:
+                  'Root translation key used in translation files (Optional)',
               value:
                   ConfigHandler.instance.projectConfig?.translationKeyInFiles,
               onChange: (newTranslationKey) {
@@ -93,6 +95,7 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
                   ?.translateApiKey = translationApiKey;
               await ConfigHandler.instance.saveInternalConfig();
               await translationProvider.reloadTranslations();
+              TranslationHandler.instance.initialize();
             },
           )
         ],
