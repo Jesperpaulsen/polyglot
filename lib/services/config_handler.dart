@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:path/path.dart' as p;
 import 'package:polyglot/models/internal_config.dart';
 import 'package:polyglot/models/internal_project_config.dart';
@@ -175,9 +176,7 @@ class ConfigHandler {
 
   Future<void> _storeInternalConfig(InternalConfig config) async {
     await FileHandler.instance.writeJsonFile(
-      fileName: 'config.json',
-      content: config.toJson(),
-    );
+        fileName: 'config.json', content: config.toJson(), overwrite: true);
   }
 
   Future<ProjectConfig?> _readProjectConfig(String path) async {
@@ -197,7 +196,8 @@ class ConfigHandler {
     try {
       await FileHandler.instance.writeJsonFile(
           fullPath: internalConfig!.internalProjectConfig?.path,
-          content: config.toJson());
+          content: config.toJson(),
+          overwrite: true);
     } catch (e) {
       print(e);
     }
