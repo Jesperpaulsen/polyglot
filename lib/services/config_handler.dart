@@ -26,7 +26,6 @@ class ConfigHandler {
 
   Future<void> _initialize() async {
     _internalConfig = await _initializeInternalConfig();
-    print(_internalConfig!.internalProjectConfig!.path);
     _projectConfig = await _initializeProjectConfig(_internalConfig!);
     if (!_isInitialized.isCompleted) _isInitialized.complete();
   }
@@ -195,9 +194,10 @@ class ConfigHandler {
     }
     try {
       await FileHandler.instance.writeJsonFile(
-          fullPath: internalConfig!.internalProjectConfig?.path,
-          content: config.toJson(),
-          overwrite: true);
+        fullPath: internalConfig!.internalProjectConfig?.path,
+        content: config.toJson(),
+        overwrite: true,
+      );
     } catch (e) {
       print(e);
     }

@@ -5,9 +5,9 @@ class ProjectConfig {
   late String? translationKeyInFiles;
 
   ProjectConfig({
-    this.languageConfigs = const <String, LanguageConfig>{},
+    Map<String, LanguageConfig>? languageConfigs,
     this.translationKeyInFiles,
-  });
+  }) : languageConfigs = languageConfigs ?? <String, LanguageConfig>{};
 
   ProjectConfig.fromJson(Map<String, dynamic> json) {
     final res = <String, LanguageConfig>{};
