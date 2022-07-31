@@ -84,6 +84,9 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
           const SizedBox(
             height: 20,
           ),
+          const SizedBox(
+            height: 20,
+          ),
           Button(
             label: 'Save',
             onPressed: () async {
@@ -93,6 +96,7 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
                   translationKeyInFiles;
               ConfigHandler.instance.internalConfig?.internalProjectConfig
                   ?.translateApiKey = translationApiKey;
+
               await ConfigHandler.instance.saveInternalConfig();
               await translationProvider.reloadTranslations();
               TranslationHandler.instance.initialize();

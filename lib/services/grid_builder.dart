@@ -19,11 +19,15 @@ class GridBuilder {
     required String translationKey,
     required String intlCode,
   }) translateString;
+  final Future<String?> Function({
+    required String translationKey,
+  }) autoGenerateWord;
 
   GridBuilder(
-    this._context,
-    this.translateString,
-  );
+    this._context, {
+    required this.translateString,
+    required this.autoGenerateWord,
+  });
 
   GridBuilderResult buildGridFromTranslationKeys({
     required Set<String> translationKeys,
@@ -111,7 +115,29 @@ class GridBuilder {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (!translationManager.isMaster)
+                  if (translationManager.isMaster)
+                    IconButton(
+                      icon: const Icon(
+                        Icons.auto_awesome,
+                      ),
+                      onPressed: () async {
+                        final translationKey =
+                            rendererContext.row.cells['translation_key']!.value;
+
+                        final translation = await autoGenerateWord(
+                          translationKey: translationKey,
+                        );
+
+                        rendererContext.stateManager.changeCellValue(
+                            rendererContext
+                                .row.cells[rendererContext.column.field]!,
+                            translation);
+                      },
+                      iconSize: 18,
+                      color: Colors.orange,
+                      padding: const EdgeInsets.all(0),
+                    )
+                  else
                     IconButton(
                       icon: const Icon(
                         Icons.translate,

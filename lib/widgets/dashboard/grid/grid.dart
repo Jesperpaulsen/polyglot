@@ -23,10 +23,13 @@ class _GridState extends ConsumerState<Grid> {
   _buildGrid() {
     final translateAndAddWord =
         ref.read(TranslationProvider.provider.notifier).translateAndAddWord;
+    final autoGenerateAndAddWord =
+        ref.read(TranslationProvider.provider.notifier).autoGenerateAndAddWord;
 
     final builderResult = GridBuilder(
       context,
-      translateAndAddWord,
+      translateString: translateAndAddWord,
+      autoGenerateWord: autoGenerateAndAddWord,
     ).buildGridFromTranslationKeys(
       translationKeys: widget.translationState.translationKeys,
       translationManagers: widget.translationState.translations,
