@@ -175,16 +175,16 @@ class ConfigHandler {
     return _storeProjectConfig(projectConfig!);
   }
 
-  Future<void> updateProjectCasing(Casing? newCasing) async {
+  Future<void> updateProjectCasing(CASING_TYPES? newCasingType) async {
     if (projectConfig == null) {
       throw Exception('Project config is null');
     }
 
-    if (newCasing == null) {
+    if (newCasingType == null) {
       return;
     }
 
-    projectConfig!.casing = newCasing;
+    projectConfig!.casingType = newCasingType;
     saveProjectConfig();
   }
 

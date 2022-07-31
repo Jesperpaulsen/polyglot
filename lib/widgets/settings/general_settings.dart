@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:polyglot/models/casing.dart';
 import 'package:polyglot/providers/translation_provider.dart';
+import 'package:polyglot/services/case_handler.dart';
 import 'package:polyglot/services/config_handler.dart';
 import 'package:polyglot/services/translation_handler/translation_handler.dart';
 import 'package:polyglot/widgets/common/button.dart';
@@ -22,7 +23,7 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
       ConfigHandler.instance.projectConfig?.translationKeyInFiles;
   var translationApiKey = ConfigHandler
       .instance.internalConfig?.internalProjectConfig?.translateApiKey;
-  var casing = ConfigHandler.instance.projectConfig?.casing;
+  var casingType = ConfigHandler.instance.projectConfig?.casingType;
 
   @override
   Widget build(BuildContext context) {
@@ -105,15 +106,15 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
                     width: 385,
                     child: DropDownMenu<Casing>(
                         hintText: 'Casing type',
-                        selectedValue: casing,
+                        selectedValue: CaseHandler.casingTitles[casingType],
                         onItemClicked: (newCasing) {
                           if (newCasing != null) {
                             setState(() {
-                              casing = newCasing;
+                              casingType = newCasing.type;
                             });
                           }
                         },
-                        items: casingsMap.values
+                        items: CaseHandler.casingTitles.values
                             .map(
                               (casing) => DropdownMenuItem(
                                 value: casing,
@@ -140,7 +141,7 @@ class _GeneralSettingsState extends ConsumerState<GeneralSettings> {
                   ?.translateApiKey = translationApiKey;
 
               await ConfigHandler.instance.saveInternalConfig();
-              await ConfigHandler.instance.updateProjectCasing(casing);
+              await ConfigHandler.instance.updateProjectCasing(casingType);
               await translationProvider.reloadTranslations();
               TranslationHandler.instance.initialize();
             },
