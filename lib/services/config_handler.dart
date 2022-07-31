@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:path/path.dart' as p;
-import 'package:polyglot/models/casing.dart';
 import 'package:polyglot/models/internal_config.dart';
 import 'package:polyglot/models/internal_project_config.dart';
 import 'package:polyglot/models/language_config.dart';
@@ -27,7 +26,6 @@ class ConfigHandler {
 
   Future<void> _initialize() async {
     _internalConfig = await _initializeInternalConfig();
-    print(_internalConfig!.internalProjectConfig!.path);
     _projectConfig = await _initializeProjectConfig(_internalConfig!);
     if (!_isInitialized.isCompleted) _isInitialized.complete();
   }
@@ -173,19 +171,6 @@ class ConfigHandler {
       directory: translationDirectory,
     );
     return _storeProjectConfig(projectConfig!);
-  }
-
-  Future<void> updateProjectCasing(CASING_TYPES? newCasingType) async {
-    if (projectConfig == null) {
-      throw Exception('Project config is null');
-    }
-
-    if (newCasingType == null) {
-      return;
-    }
-
-    projectConfig!.casingType = newCasingType;
-    saveProjectConfig();
   }
 
   Future<void> _storeInternalConfig(InternalConfig config) async {

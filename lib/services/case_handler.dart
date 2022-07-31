@@ -1,14 +1,11 @@
 import 'package:polyglot/models/casing.dart';
-import 'package:polyglot/services/config_handler.dart';
 
 class CaseHandler {
   final RegExp _upperAlphaRegex = RegExp(r'[A-Z]');
   final _symbolSet = {' ', '.', '/', '_', '\\', '-'};
 
-  late final CASING_TYPES _casingType;
   late final String _originalText;
   late final List<String> _words;
-  late final Map<CASING_TYPES, String Function({String separator})> _casingsMap;
 
   static final casingTitles = {
     CASING_TYPES.SNAKE_CASE: Casing(
@@ -37,29 +34,13 @@ class CaseHandler {
     )
   };
 
-  CaseHandler(
-    String text, {
-    CASING_TYPES? casingType,
-  }) {
+  CaseHandler(String text) {
     _originalText = text;
     _words = _groupIntoWords(_originalText);
-    _casingType = casingType ??
-        ConfigHandler.instance.projectConfig?.casingType ??
-        CASING_TYPES.SNAKE_CASE;
-    _casingsMap = {
-      CASING_TYPES.SNAKE_CASE: _getSnakeCase,
-      CASING_TYPES.PARAM_CASE: ({String separator = '_'}) =>
-          _getSnakeCase(separator: separator),
-      CASING_TYPES.PASCAL_CASE: _getPascalCase,
-      CASING_TYPES.HEADER_CASE: ({String separator = '-'}) =>
-          _getPascalCase(separator: separator),
-      CASING_TYPES.CAMEL_CASE: _getCamelCase,
-      CASING_TYPES.CONSTANT_CASE: _getConstantCase,
-    };
   }
 
   String getCasedString() {
-    return _casingsMap[_casingType]!();
+    return _getSentenceCase();
   }
 
   List<String> _groupIntoWords(String text) {
@@ -90,38 +71,11 @@ class CaseHandler {
     return words;
   }
 
-  String _getCamelCase({String separator = ''}) {
-    List<String> words = _words.map(_upperCaseFirstLetter).toList();
-    if (_words.isNotEmpty) {
-      words[0] = words[0].toLowerCase();
-    }
-
-    return words.join(separator);
-  }
-
-  String _getConstantCase({String separator = '_'}) {
-    List<String> words = _words.map((word) => word.toUpperCase()).toList();
-
-    return words.join(separator);
-  }
-
-  String _getPascalCase({String separator = ''}) {
-    List<String> words = _words.map(_upperCaseFirstLetter).toList();
-
-    return words.join(separator);
-  }
-
   String _getSentenceCase({String separator = ' '}) {
     List<String> words = _words.map((word) => word.toLowerCase()).toList();
     if (_words.isNotEmpty) {
       words[0] = _upperCaseFirstLetter(words[0]);
     }
-
-    return words.join(separator);
-  }
-
-  String _getSnakeCase({String separator = '_'}) {
-    List<String> words = _words.map((word) => word.toLowerCase()).toList();
 
     return words.join(separator);
   }

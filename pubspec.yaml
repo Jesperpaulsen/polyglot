@@ -19,7 +19,6 @@ dependencies:
   pluto_grid: ^4.0.0
   dio: ^4.0.6
   path: ^1.8.1
-  recase: ^4.0.0
 
 dev_dependencies:
   flutter_test:
